@@ -65,10 +65,10 @@
             <v-col cols="12">
                 <v-card class="ma-1 pa-2 text-center" color="indigo">
                     <v-row no-gutters dense>
-                        <v-col class="pt-2 pb-2" cols="2">
+                        <v-col class="pt-2 pb-2" cols="1">
                             <span>방어: </span>
                         </v-col>
-                        <v-col class="pt-1" cols="1">
+                        <v-col class="pt-1" cols="2">
                             <v-select
                                     :items="my_attack_item"
                                     label="공격"

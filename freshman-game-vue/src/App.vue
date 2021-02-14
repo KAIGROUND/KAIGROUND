@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <Header/>
     <div class="wrapper">
       <v-container class="grey lighten-5">
         <v-row no-gutters dense>
@@ -39,7 +38,6 @@
 </template>
 
 <script>
-import Header from './components/Header'
 import Map from './components/Map'
 import Stamina from "@/components/Stamina";
 import Point from "@/components/Point";
@@ -58,7 +56,6 @@ export default {
     Turn,
     Status,
     Inventory,
-    Header,
     Map,
     Stamina,
     Point

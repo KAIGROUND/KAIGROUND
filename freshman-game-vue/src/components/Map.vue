@@ -1,7 +1,7 @@
 <template>
     <v-card class="ma-2">
 <!--        <v-card-title>Map</v-card-title>-->
-        <div class="title grey darken-3 white--text">
+        <div class="title grey darken-3 white--text ">
             <span>Map</span>
         </div>
         <v-divider/>

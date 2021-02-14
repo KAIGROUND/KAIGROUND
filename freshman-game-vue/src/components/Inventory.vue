@@ -19,19 +19,23 @@
             <div v-for="i in Math.max(this.attack_item.length, this.defense_item.length)" v-bind:key="i">
                 <v-row no-gutters class="ma-0" :class="i%2?'bg-grey':''">
                     <v-col cols="5" class="count" v-ripple>
-                        {{(attack_item[i-1]) ? attack_item[i-1].name: ''}}
+                        <InventoryItem v-if="attack_item[i-1]" :src="attack_item[i-1].src" :name="attack_item[i-1].name"></InventoryItem>
                     </v-col>
                     <v-divider vertical/>
                     <v-col cols="1" class="count">
-                        {{(attack_item[i-1]) ? attack_item[i-1].count : ''}}
+                         <span>
+                            {{(attack_item[i-1]) ? attack_item[i-1].count : ''}}
+                         </span>
                     </v-col>
                     <v-divider vertical/>
                     <v-col cols="5" class="count" v-ripple>
-                        {{(defense_item[i-1]) ? defense_item[i-1].name : ''}}
+                        <InventoryItem v-if="defense_item[i-1]" :src="defense_item[i-1].src" :name="defense_item[i-1].name"></InventoryItem>
                     </v-col>
                     <v-divider vertical/>
                     <v-col cols="1" class="count">
-                        {{(defense_item[i-1]) ? defense_item[i-1].count : ''}}
+                        <span>
+                            {{(defense_item[i-1]) ? defense_item[i-1].count : ''}}
+                        </span>
                     </v-col>
                 </v-row>
                 <v-divider/>
@@ -43,42 +47,23 @@
 </template>
 
 <script>
+    import InventoryItem from "./InventoryItem";
     export default {
         name: "Inventory",
+        components: {InventoryItem},
         data(){
             return({
                 attack_item: [
-                    {name: "아이템1", count:1},
-                    {name: "아이템2", count:3},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:99},
+                    {name: "아이템1", count:1, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이2", count:3, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
+                    {name: "템3", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템4", count:99, src:'https://img.icons8.com/ios/452/sword.png'},
 
                 ],
                 defense_item: [
                     {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템2", count:31, src: ''},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:9},
-                    {name: "아이템5", count:99},
-                    {name: "아이템6", count:99},
-                    {name: "아이템1", count:0},
-                    {name: "아이템2", count:31},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:9},
-                    {name: "아이템5", count:99},
-                    {name: "아이템6", count:99},
-                    {name: "아이템1", count:0},
-                    {name: "아이템2", count:31},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:9},
-                    {name: "아이템5", count:99},
-                    {name: "아이템6", count:99},
-                    {name: "아이템1", count:0},
-                    {name: "아이템2", count:31},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:9},
-                    {name: "아이템5", count:99},
-                    {name: "아이템6", count:99},
+                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템아이템아이3", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
                 ],
             })
         },
@@ -101,8 +86,11 @@
     }
     .count{
         text-align: center;
-        padding: 6px 0 6px 0;
         margin-right: -1px;
+        height: 48px;
+    }
+    .count > span{
+        line-height: 2.8;
     }
     .bg-grey{
         background: #EEEEEE;
