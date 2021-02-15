@@ -13,18 +13,6 @@ class Defitem:
         self.itemimg=itemimage
         self.defpower=defencepower
 
-class Sector:
-    def __init__(self, name, code, teamlist, itemsetlist):
-        self.name=name
-        self.code=code
-        self.teamlist=teamlist
-        self.itemsetlist=itemsetlist
-    def setdata(self, name, code, teamlist, itemsetlist):
-        self.name=name
-        self.code=code
-        self.teamlist=teamlist
-        self.itemsetlist=itemsetlist
-
 class Team:
     def __init__(self, T_id, health, points, attitemlist, defitemlist, sleep):
         self.T_id=T_id
