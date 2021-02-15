@@ -5,7 +5,7 @@
             <span>Point</span>
         </div>
         <v-divider></v-divider>
-        <v-simple-table dense>
+        <v-simple-table>
             <tbody>
             <tr v-for="item in 13" :key="item.name" :bgcolor="item%2 ? '#EEEEEE': ''">
                 <td style="width:10%; padding: 0 0 0 12px">{{ item }}</td>

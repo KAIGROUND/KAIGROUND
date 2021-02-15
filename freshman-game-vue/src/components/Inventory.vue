@@ -5,7 +5,7 @@
             <span>Inventory</span>
         </div>
         <v-divider/>
-        <v-container id="scroll-target" style="max-height: 600px; padding: 0" class="overflow-y-auto">
+        <v-container id="scroll-target" style="max-height: 620px; padding: 0" class="overflow-y-auto">
             <v-row no-gutters>
                 <v-col cols="6" class="subtitle">
                     Attack
@@ -63,7 +63,19 @@
                 defense_item: [
                     {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
                     {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템아이템아이3", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
+                    {name: "아이템아이템", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
+                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템아이템", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
+                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템아이템3", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
+                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템아이3", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
+                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아아이3", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
                 ],
             })
         },
@@ -86,7 +98,7 @@
     }
     .count{
         text-align: center;
-        margin-right: -1px;
+        margin-right: -1.5px;
         height: 48px;
     }
     .count > span{

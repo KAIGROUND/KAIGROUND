@@ -6,7 +6,7 @@
         </div>
         <v-divider/>
         <v-img
-                max-height="600px"
+                max-height="620px"
                 src="../assets/map.png"
         ></v-img>
     </v-card>
