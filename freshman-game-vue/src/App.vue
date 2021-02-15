@@ -1,7 +1,9 @@
 <template>
   <v-app>
     <div class="wrapper">
+
       <v-container class="grey lighten-5">
+        <v-row no-gutters dense><Header/></v-row>
         <v-row no-gutters dense>
           <v-col cols="5">
             <Map/>
@@ -46,6 +48,7 @@ import Status from "@/components/Status";
 import Turn from "@/components/Turn";
 import Armor from "@/components/Armor";
 import Footer from "@/components/Footer";
+import Header from "./components/Header";
 
 export default {
   name: 'App',
@@ -58,7 +61,8 @@ export default {
     Inventory,
     Map,
     Stamina,
-    Point
+    Point,
+    Header
   },
 
 };

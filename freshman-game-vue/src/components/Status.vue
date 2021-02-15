@@ -111,7 +111,8 @@
             })
         },
         methods:{
-            run_attack: () => {
+            run_attack(){
+                console.log(this.$store.state.class)
                 alert("attack!")
             }
         }
