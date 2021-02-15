@@ -7,11 +7,47 @@ class Attitem:
         self.attpower=attackpower
         self.attdis=attackdistance
 
+[Attitem('퀴즈', '', 2, 2)]
+[Attitem('무거운 전공책', '', 2, 2)]
+[Attitem('아침 수업', '', 2, 4)]
+[Attitem('연습반', '', 4, 2)]
+[Attitem('기숙사 호실 이동', '', 4, 1)]
+[Attitem('과제', '', 4, 3)]
+[Attitem('계절 학기', '', 4, 3)]
+[Attitem('중간고사', '', 6, 2)]
+[Attitem('기말고사', '', 6, 4)]
+[Attitem('실험 수업', '', 2, 3)]
+[Attitem('A약하다', '', 1, 5)]
+[Attitem('B내리기', '', 3, 3)]
+[Attitem('C뿌리기', '', 5, 2)]
+[Attitem('D스트로이어', '', 6, 4)]
+[Attitem('F-킬라', '', 10, 2)]
+
+
 class Defitem:
-    def __init__(self, name, itemimage, defencepower):
+    def __init__(self, name, itemimage, defencepower, additionalhealth):
         self.name=name
         self.itemimg=itemimage
         self.defpower=defencepower
+        self.addhealth=additionalhealth
+
+[Defitem('예습복습', '', 2, 0)]
+[Defitem('낮잠', '', 2, 0)]
+[Defitem('야식', '', 2, 0)]
+[Defitem('튜터링', '', 2, 0)]
+[Defitem('족보', '', 3, 0)]
+[Defitem('공강', '', 3, 0)]
+[Defitem('딸기 파티', '', 3, 0)]
+[Defitem('축제', '', 3, 0)]
+[Defitem('라이프', '', 5, 0)]
+[Defitem('수강 철회', '', 5, 0)]
+[Defitem('카이 야잠', '', 0, 3)]
+[Defitem('카이 돕바', '', 0, 3)]
+[Defitem('청바지', '', 0, 1)]
+[Defitem('카고바지', '', 0, 1)]
+[Defitem('체크남방', '', 0, 1)]
+[Defitem('카이 후드티', '', 0, 2)]
+
 
 class Team:
     def __init__(self, T_id, health, points, attitemlist, defitemlist, sleep):
