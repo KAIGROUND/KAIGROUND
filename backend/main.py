@@ -2,7 +2,7 @@
 n_team = 26
 n_node = 42
 
-attitem_list = {'퀴즈':{'attack':2, 'range':2}, '무거운 전공책':{'attack':2, 'range':2}, '아침 수업':{'attack':2, 'range':4}, '연습반':{'attack':4, 'range':2}, '기숙사 호실 이동':{'attack':4, 'range':1}, '과제':{'attack':4, 'range':3}, '계절 학기':{'attack':4, 'range':3}, '중간고사':{'attack':5, 'range':2}, '기말고사':{'attack':6, 'range':4}, '실험 수업':{'attack':2, 'range':3}, 'A약하다':{'attack':1, 'range':5}, 'B내리기':{'attack':3, 'range':3}, 'C뿌리기':{'attack':5, 'range':2}, 'D스트로이어':{'attack':6, 'range':4}, 'F-킬라':{'attack':10, 'range':2}}
+attitem_list = {'개강':{'attack':1, 'range':2}, '퀴즈':{'attack':2, 'range':2}, '무거운 전공책':{'attack':2, 'range':2}, '아침 수업':{'attack':2, 'range':4}, '연습반':{'attack':4, 'range':2}, '기숙사 호실 이동':{'attack':4, 'range':1}, '과제':{'attack':4, 'range':3}, '계절 학기':{'attack':4, 'range':3}, '중간고사':{'attack':5, 'range':2}, '기말고사':{'attack':6, 'range':4}, '실험 수업':{'attack':2, 'range':3}, 'A약하다':{'attack':1, 'range':5}, 'B내리기':{'attack':3, 'range':3}, 'C뿌리기':{'attack':5, 'range':2}, 'D스트로이어':{'attack':6, 'range':4}, 'F-킬라':{'attack':10, 'range':2}}
 defitem_list = {'예습복습':{'defense':2, 'armor':0}, '낮잠':{'defense':2, 'armor':0}, '야식':{'defense':2, 'armor':0}, '튜터링':{'defense':2, 'armor':0}, '족보':{'defense':3, 'armor':0}, '공강':{'defense':3, 'armor':0}, '딸기 파티':{'defense':3, 'armor':0}, '축제':{'defense':3, 'armor':0}, '라이프':{'defense':5, 'armor':0}, '수강 철회':{'defense':5, 'armor':0}, '카이 야잠':{'defense':0, 'armor':3}, '카이 돕바':{'defense':0, 'armor':3}, '청바지':{'defense':0, 'armor':1}, '카고바지':{'defense':0, 'armor':1}, '체크남방':{'defense':0, 'armor':1}, '카이 후드티':{'defense':0, 'armor':2}}
 
 class Attitem:
