@@ -38,7 +38,7 @@ class Team:
         self.T_id=T_id
         self.pos=position
         self.hp=health
-        self.pt=points
+        self.points=points
         self.attitemlist=attitemlist
         self.defitemlist=defitemlist
         self.deflist_old=defencelist_old
@@ -48,7 +48,7 @@ class Team:
         self.T_id=T_id
         self.pos=position
         self.hp=health
-        self.pt=points
+        self.points=points
         self.attitemlist=attitemlist
         self.defitemlist=defitemlist
         self.deflist_old=defencelist_old
@@ -72,7 +72,8 @@ team14=Team(14)
 team15=Team(15)
 team_list=(team1, team2, team3, team4, team5)
 
-nowteam=Team()
+
+nowteam=team1
 sector1=Sector()
 sector2=Sector()
 begining=Attitem()
@@ -95,7 +96,7 @@ def ATTACK:
         for i in range(len(team_list)):
             if team_list[i+1].T_id==attacking_team:
                 def_item=None
-                team_list[i+1].deflist_new.append([nowteam, attacking_item, defencing_item])
+                team_list[i+1].deflist_new.append([nowteam, attacking_item, def_item])
                 return 0
             else:
                 pass
@@ -105,9 +106,43 @@ def ATTACK:
 def DEFENCE:
     for i in range(len(nowteam.deflist_old)):
         print(nowteam.deflist_old)
-        defencing_item=
+        defencing_item=jokbo
         if defencing_item in nowteam.defitemlist:
-            nowteam.deflist_old[i]
+            nowteam.deflist_old[i][2]=defencing_item
+            return 0
+        else:
+            return 'Error'
+
+def AFTERBATTLE:
+    for i in range(len(nowteam.deflist_old))
+        if nowteam.deflist_old[i][2]!=None:
+            damage=nowteam.deflist_old[i][1].attpower-nowteam.deflist_old[i][2].defpower
+            if damage<0:
+                damage=0
+            else:
+                pass
+        else:
+            damage=nowteam.deflist_old[i][1].attpower
+
+        nowteam.hp=nowteam.hp-damage
+        if nowteam.hp<=0:
+            nowteam.hp=0
+            nowteam.sleep=True
+        else:
+            pass
+
+        if nowteam.sleep
+            nowteam.deflist_old[i][0].points+=10
+            nowteam.points-=5
+        else:
+            nowteam.deflist_old[i][0].points+=damage
+
+    nowteam.deflist_old=nowteam.deflist_new
+    nowteam.deflist_new=[]
+
+
+
+
 
 
 
