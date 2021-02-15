@@ -1,4 +1,119 @@
+# -*- coding: euc-kr -*-
+n_team = 26
+n_node = 42
 
+attitem_list = {'ÄûÁî':{'attack':2, 'range':2}, '¹«°Å¿î Àü°øÃ¥':{'attack':2, 'range':2}, '¾ÆÄ§ ¼ö¾÷':{'attack':2, 'range':4}, '¿¬½À¹İ':{'attack':4, 'range':2}, '±â¼÷»ç È£½Ç ÀÌµ¿':{'attack':4, 'range':1}, '°úÁ¦':{'attack':4, 'range':3}, '°èÀı ÇĞ±â':{'attack':4, 'range':3}, 'Áß°£°í»ç':{'attack':5, 'range':2}, '±â¸»°í»ç':{'attack':6, 'range':4}, '½ÇÇè ¼ö¾÷':{'attack':2, 'range':3}, 'A¾àÇÏ´Ù':{'attack':1, 'range':5}, 'B³»¸®±â':{'attack':3, 'range':3}, 'C»Ñ¸®±â':{'attack':5, 'range':2}, 'D½ºÆ®·ÎÀÌ¾î':{'attack':6, 'range':4}, 'F-Å³¶ó':{'attack':10, 'range':2}}
+defitem_list = {'¿¹½Àº¹½À':{'defense':2, 'armor':0}, '³·Àá':{'defense':2, 'armor':0}, '¾ß½Ä':{'defense':2, 'armor':0}, 'Æ©ÅÍ¸µ':{'defense':2, 'armor':0}, 'Á·º¸':{'defense':3, 'armor':0}, '°ø°­':{'defense':3, 'armor':0}, 'µş±â ÆÄÆ¼':{'defense':3, 'armor':0}, 'ÃàÁ¦':{'defense':3, 'armor':0}, '¶óÀÌÇÁ':{'defense':5, 'armor':0}, '¼ö°­ Ã¶È¸':{'defense':5, 'armor':0}, 'Ä«ÀÌ ¾ßÀá':{'defense':0, 'armor':3}, 'Ä«ÀÌ µ½¹Ù':{'defense':0, 'armor':3}, 'Ã»¹ÙÁö':{'defense':0, 'armor':1}, 'Ä«°í¹ÙÁö':{'defense':0, 'armor':1}, 'Ã¼Å©³²¹æ':{'defense':0, 'armor':1}, 'Ä«ÀÌ ÈÄµåÆ¼':{'defense':0, 'armor':2}}
+
+class Attitem:
+    def __init__(self, name, itemimage, attackpower, attackdistance):
+        self.name = name
+        self.itemimg = itemimage
+        self.attpower = attackpower
+        self.attdis = attackdistance
+
+
+class Defitem:
+    def __init__(self, name, itemimage, defencepower):
+        self.name = name
+        self.itemimg = itemimage
+        self.defpower = defencepower
+
+
+class Node:
+    def __init__(self, nd_id, items, teams, adj):
+        self.nd_id = nd_id
+        self.items = items  # items dictionary list
+        self.teams = teams  # deployed teams
+        self.adj = adj  # adjacent node id
+
+
+class graph:
+    def __init__(self, n_node=n_node):
+        self.g = []  # Â÷·Ê·Î 1¹ø ³ëµåºÎÅÍ~ ~!!!! 0¹øÂ° ³ëµå´Â »ç¿ëÇÏÁö ¾ÊÀ½
+        self.d = [[1e10 for _ in range(n_node + 1)] for i in range(n_node + 1)]
+        for i in range(n_node + 1): self.d[i][i] = 0
+        adj = [[], [2, 4, 20], [1, 3], [2, 8], [1, 5], [4, 6], [5, 7, 10], [6, 8], [3, 7, 9, 17], [8, 10], [6, 9, 11],
+               [10, 12], [11, 13, 32], [12, 14], [15, 27, 13], [16, 14], [17, 15], [8, 16, 18], [17, 19], [18, 20, 26],
+               [1, 19, 21], [20, 22], [21, 23], [22, 24], [23, 25, 42], [24, 26, 27], [19, 25], [14, 25, 28],
+               [27, 29, 40], [28, 30], [29, 31], [30, 32], [12, 31, 33], [32, 34], [33, 35], [34, 36], [35, 37],
+               [38, 39, 41, 36], [37, 42], [40, 37], [28, 39], [37, 42], [41, 38, 24]]  # Á÷Á¢ ¸¸µé±â
+        item = [[] for i in range(n_node + 1)]
+        team = [[i for i in range(1, n_team + 1, 1)]] + [[] for i in
+                                                         range(n_node)]  # ÃÊ±âÈ­½Ã ¸ğµç ÆÀÀº 0¿¡ ÀÖÀ½ i¸¦ team object·Î ¹Ù²ÙÀÚ
+        for i in range(n_node + 1):
+            self.g.append(Node(i, item[i], team[i], adj[i]))
+        for i in range(n_node + 1):
+            for j in self.g[i].adj:
+                self.d[i][j] = 1
+        for k in range(n_node + 1):
+            for i in range(n_node + 1):
+                for j in range(n_node + 1):
+                    self.d[i][j] = min(self.d[i][k] + self.d[k][j], self.d[i][j])
+
+    def dis_node(self, a, b):
+        return self.d[a][b]
+
+    def move_g(self, nd_id, team_pos, team_id):  # nd_id·Î team °´Ã¼°¡ ÀÌµ¿
+        if self.dis_node(team_pos, nd_id) > 3:
+            return 0
+        self.g[team_pos].teams.remove(team_id)
+        self.g[nd_id].teams.append(team_id)
+        return 1
+
+    def add_item(self, nd_id, item):
+        self.g[nd_id].items.append(item)
+
+    def del_item(self, nd_id, item):
+        self.g[nd_id].items.remove(item)
+
+    def show_item(self, nd_id):
+        for i in self.g[nd_id].items:
+            print(i.name)
+
+
+map = graph(n_node)
+
+
+class Team:
+    def __init__(self, id, health, points, attitemlist, defitemlist, sleep):
+        self.id = id
+        self.pos = 0  # section no.
+        self.hp = health
+        self.points = points
+        self.attitemlist = attitemlist
+        self.defitemlist = defitemlist
+        self.sleep = sleep
+
+    def update_health(self, health):
+        self.hp += health
+
+    def update_point(self, point):
+        self.points += point
+
+    def add_attitem(self, attitem):
+        self.attitemlist.append(attitem)
+
+    def add_defitem(self, defitem):
+        self.defitemlist.append(defitem)
+
+    def remove_defitem(self, defitem):
+        self.defitemlist.remove(defitem)
+
+    def remove_attitem(self, attitem):
+        self.attitemlist.remove(attitem)
+
+    def move_team(self, nd_id, mp=map):
+        if not mp.move_g(nd_id, self.pos, self.id):
+            print("Invalid Move")
+            return
+        self.pos = nd_id
+
+
+Team_list = [Team(0, 0, 0, 0, 0, 0)] + [Team(i + 1, 10, 0, [], [], 0) for i in range(n_team)]
+
+
+////////////////////////////////////////////////////////////////////////
 
 class Attitem:
     def __init__(self, name, itemimage, attackpower, attackdistance):
@@ -7,21 +122,21 @@ class Attitem:
         self.attpower=attackpower
         self.attdis=attackdistance
 
-[Attitem('í€´ì¦ˆ', '', 2, 2)]
-[Attitem('ë¬´ê±°ìš´ ì „ê³µì±…', '', 2, 2)]
-[Attitem('ì•„ì¹¨ ìˆ˜ì—…', '', 2, 4)]
-[Attitem('ì—°ìŠµë°˜', '', 4, 2)]
-[Attitem('ê¸°ìˆ™ì‚¬ í˜¸ì‹¤ ì´ë™', '', 4, 1)]
-[Attitem('ê³¼ì œ', '', 4, 3)]
-[Attitem('ê³„ì ˆ í•™ê¸°', '', 4, 3)]
-[Attitem('ì¤‘ê°„ê³ ì‚¬', '', 6, 2)]
-[Attitem('ê¸°ë§ê³ ì‚¬', '', 6, 4)]
-[Attitem('ì‹¤í—˜ ìˆ˜ì—…', '', 2, 3)]
-[Attitem('Aì•½í•˜ë‹¤', '', 1, 5)]
-[Attitem('Bë‚´ë¦¬ê¸°', '', 3, 3)]
-[Attitem('Cë¿Œë¦¬ê¸°', '', 5, 2)]
-[Attitem('DìŠ¤íŠ¸ë¡œì´ì–´', '', 6, 4)]
-[Attitem('F-í‚¬ë¼', '', 10, 2)]
+[Attitem('ÄûÁî', '', 2, 2)]
+[Attitem('¹«°Å¿î Àü°øÃ¥', '', 2, 2)]
+[Attitem('¾ÆÄ§ ¼ö¾÷', '', 2, 4)]
+[Attitem('¿¬½À¹İ', '', 4, 2)]
+[Attitem('±â¼÷»ç È£½Ç ÀÌµ¿', '', 4, 1)]
+[Attitem('°úÁ¦', '', 4, 3)]
+[Attitem('°èÀı ÇĞ±â', '', 4, 3)]
+[Attitem('Áß°£°í»ç', '', 6, 2)]
+[Attitem('±â¸»°í»ç', '', 6, 4)]
+[Attitem('½ÇÇè ¼ö¾÷', '', 2, 3)]
+[Attitem('A¾àÇÏ´Ù', '', 1, 5)]
+[Attitem('B³»¸®±â', '', 3, 3)]
+[Attitem('C»Ñ¸®±â', '', 5, 2)]
+[Attitem('D½ºÆ®·ÎÀÌ¾î', '', 6, 4)]
+[Attitem('F-Å³¶ó', '', 10, 2)]
 
 
 class Defitem:
@@ -31,22 +146,22 @@ class Defitem:
         self.defpower=defencepower
         self.addhealth=additionalhealth
 
-[Defitem('ì˜ˆìŠµë³µìŠµ', '', 2, 0)]
-[Defitem('ë‚®ì ', '', 2, 0)]
-[Defitem('ì•¼ì‹', '', 2, 0)]
-[Defitem('íŠœí„°ë§', '', 2, 0)]
-[Defitem('ì¡±ë³´', '', 3, 0)]
-[Defitem('ê³µê°•', '', 3, 0)]
-[Defitem('ë”¸ê¸° íŒŒí‹°', '', 3, 0)]
-[Defitem('ì¶•ì œ', '', 3, 0)]
-[Defitem('ë¼ì´í”„', '', 5, 0)]
-[Defitem('ìˆ˜ê°• ì² íšŒ', '', 5, 0)]
-[Defitem('ì¹´ì´ ì•¼ì ', '', 0, 3)]
-[Defitem('ì¹´ì´ ë•ë°”', '', 0, 3)]
-[Defitem('ì²­ë°”ì§€', '', 0, 1)]
-[Defitem('ì¹´ê³ ë°”ì§€', '', 0, 1)]
-[Defitem('ì²´í¬ë‚¨ë°©', '', 0, 1)]
-[Defitem('ì¹´ì´ í›„ë“œí‹°', '', 0, 2)]
+[Defitem('¿¹½Àº¹½À', '', 2, 0)]
+[Defitem('³·Àá', '', 2, 0)]
+[Defitem('¾ß½Ä', '', 2, 0)]
+[Defitem('Æ©ÅÍ¸µ', '', 2, 0)]
+[Defitem('Á·º¸', '', 3, 0)]
+[Defitem('°ø°­', '', 3, 0)]
+[Defitem('µş±â ÆÄÆ¼', '', 3, 0)]
+[Defitem('ÃàÁ¦', '', 3, 0)]
+[Defitem('¶óÀÌÇÁ', '', 5, 0)]
+[Defitem('¼ö°­ Ã¶È¸', '', 5, 0)]
+[Defitem('Ä«ÀÌ ¾ßÀá', '', 0, 3)]
+[Defitem('Ä«ÀÌ µ½¹Ù', '', 0, 3)]
+[Defitem('Ã»¹ÙÁö', '', 0, 1)]
+[Defitem('Ä«°í¹ÙÁö', '', 0, 1)]
+[Defitem('Ã¼Å©³²¹æ', '', 0, 1)]
+[Defitem('Ä«ÀÌ ÈÄµåÆ¼', '', 0, 2)]
 
 
 class Team:
@@ -117,7 +232,7 @@ def DEFENCE:
             return 'Error'
 
 def AFTERBATTLE:
-    for i in range(len(nowteam.deflist_old))
+    for i in range(len(nowteam.deflist_old)):
         if nowteam.deflist_old[i][2]!=None:
             damage=nowteam.deflist_old[i][1].attpower-nowteam.deflist_old[i][2].defpower
             if damage<0:
