@@ -97,6 +97,7 @@ def ATTACK:
             if team_list[i+1].T_id==attacking_team:
                 def_item=None
                 team_list[i+1].deflist_new.append([nowteam, attacking_item, def_item])
+                nowteam.attitemlist.remove(attacking_item)
                 return 0
             else:
                 pass
@@ -109,6 +110,7 @@ def DEFENCE:
         defencing_item=jokbo
         if defencing_item in nowteam.defitemlist:
             nowteam.deflist_old[i][2]=defencing_item
+            nowteam.defitemlist.remove(defencing_item)
             return 0
         else:
             return 'Error'
