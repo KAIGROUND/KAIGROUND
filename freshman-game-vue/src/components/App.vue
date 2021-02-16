@@ -3,7 +3,7 @@
     <div class="wrapper">
 
       <v-container class="grey lighten-5">
-        <v-row no-gutters dense><Header/></v-row>
+        <Minigame v-if="false"/>
         <v-row no-gutters dense>
           <v-col cols="5">
             <Map/>
@@ -34,13 +34,14 @@
             <Footer/>
           </v-col>
         </v-row>
+        <v-row no-gutters dense><Header/></v-row>
       </v-container>
     </div>
   </v-app>
 </template>
 
 <script>
-import Map from './components/Map'
+import Map from './Map'
 import Stamina from "@/components/Stamina";
 import Point from "@/components/Point";
 import Inventory from "@/components/Inventory";
@@ -48,12 +49,14 @@ import Status from "@/components/Status";
 import Turn from "@/components/Turn";
 import Armor from "@/components/Armor";
 import Footer from "@/components/Footer";
-import Header from "./components/Header";
+import Header from "./Header";
+import Minigame from "./Minigame";
 
 export default {
   name: 'App',
 
   components: {
+    Minigame,
     Footer,
     Armor,
     Turn,
