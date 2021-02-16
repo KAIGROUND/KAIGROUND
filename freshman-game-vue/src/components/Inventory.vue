@@ -54,7 +54,7 @@
         data(){
             return({
                 attack_item: [
-                    {name: "아이템1", count:1, src:'https://img.icons8.com/ios/452/sword.png'},
+                    {name: "아이템1", count:1, src:'../assets/test1.png'},
                     {name: "아이2", count:3, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
                     {name: "템3", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
                     {name: "아이템4", count:99, src:'https://img.icons8.com/ios/452/sword.png'},

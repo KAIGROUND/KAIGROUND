@@ -110,9 +110,11 @@
             }
             this.node[2].cur_team.push(21)
             this.node[2].cur_team.push(5)
+            this.node[22].cur_team.push(13)
             this.node[21].cur_team.push(7)
             this.node[21].cur_team.push(12)
             this.node[22].cur_team.push(2)
+            this.node[22].cur_team.push(17)
         },
         computed:{
         }
