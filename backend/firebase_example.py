@@ -1,13 +1,15 @@
 import firebase_admin
 from flask import Flask, request
+from flask_cors import CORS
 from firebase_admin import credentials, db
 from threading import Thread, Timer
 import sys
 import time
 
 app=Flask(__name__)
+CORS(app)
 cred = credentials.Certificate("./kaist-freshman-game-firebase-adminsdk-8xps2-5c0970a8f2.json")
-admin = firebase_admin.initialize_app(cred, {'databaseURL': 'https://kaist-freshman-game-default-rtdb.firebaseio.com'})
+admin = firebase_admin.initialize_app(cred, {'databaseURL': 'https://kai-ground-default-rtdb.firebaseio.com'})
 game_thread = None
 
 
@@ -33,6 +35,7 @@ def every_second():
 
     #mode 0 : move, 1: bg, 2: wait
 
+    #2분 시작할 때
     if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
         turn = time_idx // (T[0] + T[1] + T[2] + T[3]) + 1
         if turn > 15:
@@ -40,8 +43,17 @@ def every_second():
         set_value("status", "turn", turn)
         set_value("status", "mode", 0)
 
+    #2분 끝나고 4초
+    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + 4):
+        pass
+
+    #5분 시작할 때
     if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + T[1]):
         set_value("status", "mode", 1)
+
+    #5분 끝나고 4초
+    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + T[1] + T[2] + 4):
+        pass
 
 
     # Update
@@ -75,6 +87,10 @@ def admin_init():
     game_thread = Thread(target=run_game)
     game_thread.start()
     return 'Start to run'
+
+@app.route('/test')
+def test():
+    return 'Hello'
 
 
 if __name__ == "__main__":
