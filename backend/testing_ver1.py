@@ -21,7 +21,7 @@ class graph:
         self.d=[[1e10 for _ in range(n_node+1)] for i in range(n_node+1)]
         for i in range(n_node+1): self.d[i][i]=0
         adj=[[],[2,4,20],[1,3],[2,8],[1,5],[4,6],[5,7,10],[6,8],[3,7,9,17],[8,10],[6,9,11],[10,12],[11,13,32],[12,14],[15,27,13],[16,14],[17,15],[8,16,18],[17,19],[18,20,26],[1,19,21],[20,22],[21,23],[22,24],[23,25,42],[24,26,27],[19,25],[14,25,28],[27,29,40],[28,30],[29,31],[30,32],[12,31,33],[32,34],[33,35],[34,36],[35,37],[38,39,41,36],[37,42],[40,37],[28,39],[37,42],[41,38,24]] #직접 만들기
-        item=[[], [[7, 6], [2, 12], [6, 4]], [[8, 3], [2, 24], [7, 5]], [[4, 4], [6, 15], [8, 14]], [[5, 24], [4, 21], [2, 3]], [[10, 26], [7, 19], [7, 20]], [[7, 17], [8, 17], [4, 3]], [[3, 16], [4, 27], [3, 14]], [[6, 4], [2, 22], [6, 12]], [[4, 2], [4, 13], [4, 15]], [[5, 6], [7, 13], [2, 25]], [[4, 9], [6, 16], [5, 11]], [[2, 13], [6, 26], [4, 4]], [[3, 3], [2, 22], [5, 5]], [[4, 22], [6, 27], [5, 7]], [[10, 27], [3, 10], [4, 15]], [[3, 2], [7, 19], [8, 2]], [[9, 6], [4, 18], [3, 12]], [[5, 20], [11, 13], [3, 2]], [[3, 7], [5, 18], [3, 9]], [[2, 15], [5, 27], [9, 20]], [[2, 25], [3, 7], [2, 2]], [[2, 15], [6, 3], [6, 2]], [[4, 6], [5, 8], [4, 12]], [[6, 13], [7, 5], [3, 4]], [[6, 13], [7, 23], [8, 13]], [[5, 6], [9, 16], [11, 12]], [[6, 16], [11, 14], [7, 14]], [[2, 19], [3, 5], [4, 18]], [[8, 23], [7, 14], [9, 22]], [[2, 17], [10, 23], [3, 24]], [[10, 12], [9, 7], [2, 14]], [[4, 23], [6, 13], [10, 3]], [[3, 18], [3, 2], [3, 14]], [[3, 22], [2, 26], [7, 15]], [[2, 4], [9, 10], [4, 6]], [[2, 12], [3, 4], [8, 26]], [[4, 2], [3, 19], [2, 8]], [[4, 12], [2, 7], [7, 16]], [[8, 7], [2, 15], [11, 5]], [[8, 23], [4, 8], [7, 3]], [[3, 4], [8, 27], [2, 3]], [[2, 17], [6, 26], [10, 8]]]
+        item=[[] for i in range(n_node+1)]
         team=[[i for i in range(1, n_team+1,1)]] + [[] for i in range(n_node)] #초기화시 모든 팀은 0에 있음 i를 team object로 바꾸자
         for i in range(n_node+1):
             self.g.append(Node(i,item[i],team[i],adj[i]))
@@ -113,17 +113,16 @@ class Team:
                 rt += [i]
         return rt
 
-Team_list = [Team(0,0,0,[],[],0)]+[Team(i+1,10,0,['개강'],[],0) for i in range(n_team)]
-attack_list=[[] for i in range(n_team+1)] #attack_list[a][b] 뜻 a 팀이 attack_list[a][b]한테 공격 받음
-last_attack_list=[[] for i in range(n_team+1)]
-
-def attack(a:Team, b:Team, attack_item:str): #a attack b with attack_item
-    if attack_item not in a.attack_itemlist:
-        raise Exception("Error attack_item not in the player")
-    attack_list[b.id].append([a.id,attack_item])
-
 def start_game():
-    global attack_list, last_attack_list, Team_list
+    Team_list = [Team(0,0,0,[],[],0)]+[Team(1,10,0,['개강'],[],0),Team(2,10,0,['개강'],[],0),Team(3,10,0,['개강'],[],0),Team(4,10,0,['개강'],[],0),Team(5,10,0,['개강'],[],0)]
+    attack_list=[[] for i in range(n_team+1)] #attack_list[a][b] 뜻 a 팀이 attack_list[a][b]한테 공격 받음
+    last_attack_list=[[] for i in range(n_team+1)]
+
+    def attack(a:Team, b:Team, attack_item:str): #a attack b with attack_item
+        if attack_item not in a.attack_itemlist:
+            raise Exception("Error attack_item not in the player")
+        attack_list[b.id].append([a.id,attack_item])
+
     print("Game start!")
     print("각각 시작할 구역을 선택하세요.")
     mv=list(map(int, stdin.readline().split()))
@@ -146,8 +145,6 @@ def start_game():
                 print("이동할 수 없는 구역입니다. 움직이지 않습니다.")
         mp.show_teams()
 
-
-
         print("공격 선택 단계")  
         for i in range(n_team):
             print("Team %d"%(i+1))
@@ -168,7 +165,6 @@ def start_game():
             else:
                 print("해당 아이템으로 공격할 수 있는 적이 없습니다.")
         
-
         print("방어 단계")
 
         for i in range(n_team):
@@ -217,3 +213,5 @@ def start_game():
         last_attack_list=attack_list
         attack_list=[[] for i in range(n_team+1)]
         input()
+    
+start_game()
