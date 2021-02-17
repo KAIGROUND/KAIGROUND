@@ -4,14 +4,17 @@ import vuetify from './plugins/vuetify';
 import VueRouter from 'vue-router';
 import Login from "./components/Login";
 import Main from "./components/Main";
-import io from 'socket.io-client'
+import firebase from "firebase";
 import { store } from "./store";
+import axios from 'axios'
+const firebaseConfig=require("../credentials/kaist-freshman-game-firebase-adminsdk-8xps2-5c0970a8f2")
 
-const socket = io('http://localhost:3001')
+firebase.initializeApp(firebaseConfig)
+Vue.prototype.$firebase = firebase
+Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
-Vue.prototype.$socket = socket
 
 
 const router = new VueRouter({

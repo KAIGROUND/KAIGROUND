@@ -2,7 +2,7 @@
     <div>
         <div id="container">
 
-            <img width="48px" height="48px" style="vertical-align:middle; padding: 8px" :src="src">
+            <img width="64px" height="64px" style="vertical-align:middle; padding: 8px" :src="src">
             <span>{{name}}</span>
 
         </div>
@@ -21,6 +21,6 @@
         font-size: 0.9em;
     }
     #container{
-        height: 48px;
+        height: 64px;
     }
 </style>

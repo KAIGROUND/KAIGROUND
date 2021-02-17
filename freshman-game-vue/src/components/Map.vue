@@ -17,7 +17,7 @@
                        fab
                        :color="i.cur_team.includes(parseInt($store.state.class)) ? 'pink' : 'indigo'"
                        class="fab-small"
-                       :style="'position:absolute;left: '+(i.pos[0]-50)+'px; top: '+(i.pos[1]-165)+'px;color:white'"
+                       :style="'position:absolute;left: '+(i.pos[0])+'px; top: '+(i.pos[1])+'px;color:white'"
                 >{{switch1 ? i.cur_team.length ? i.cur_team.length:'' : idx+1}}</v-btn>
             </div>
 
@@ -103,7 +103,7 @@
         created() {
             for(let i = 0; i < 42; i++){
                 this.node.push({
-                    pos: this.pos[i],
+                    pos: [this.pos[i][0]*1.02-46, this.pos[i][1]*1.02-175],
                     name: this.name[i],
                     cur_team: [],
                 })
@@ -113,7 +113,6 @@
             this.node[22].cur_team.push(13)
             this.node[21].cur_team.push(7)
             this.node[21].cur_team.push(12)
-            this.node[22].cur_team.push(2)
             this.node[22].cur_team.push(17)
         },
         computed:{
