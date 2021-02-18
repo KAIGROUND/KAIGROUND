@@ -8,16 +8,18 @@ import time
 
 app=Flask(__name__)
 CORS(app)
-cred = credentials.Certificate("./kaist-freshman-game-firebase-adminsdk-8xps2-5c0970a8f2.json")
-admin = firebase_admin.initialize_app(cred, {'databaseURL': 'https://kai-ground-default-rtdb.firebaseio.com'})
+cred = credentials.Certificate("./kaistground-firebase-adminsdk-gmdug-6d30cf4f0d.json")
+admin = firebase_admin.initialize_app(cred, {'databaseURL': 'https://kaistground-default-rtdb.firebaseio.com'})
 game_thread = None
 
 
 status = db.reference('status')
+stop_sig = False
 
 time_idx=None
 T=[120,5,300,5]
 
+app.debug = True
 
 def set_value(ref, child, val):
     db.reference(ref).child(child).set(val)
@@ -26,8 +28,10 @@ def set_interval(func, sec):
     def func_wrapper():
         set_interval(func, sec)
         func()
-    t = Timer(sec, func_wrapper)
-    t.start()
+    t = None
+    if not stop_sig:
+        t = Timer(sec, func_wrapper)
+        t.start()
     return t
 
 def every_second():
@@ -62,11 +66,9 @@ def every_second():
 
 def run_game():
     global time_idx
-    set_value("status", "mode", 2)
-    time.sleep(1)
     time_idx = status.child('time_idx').get()
 
-    #initialization from time_idx (For exeption)
+    #initialization from time_idx (For exeption) - calculation of mode
     set_value("status", "turn", time_idx // (T[0] + T[1] + T[2] + T[3]) + 1)
     if time_idx % (T[0] + T[1] + T[2] + T[3]) < T[0]:
         set_value("status", "mode", 0)
@@ -77,6 +79,8 @@ def run_game():
 
 @app.route('/admin_init')
 def admin_init():
+    global stop_sig
+    stop_sig = False
     idx = request.args.get('time_idx')
 
     if idx is not None:
@@ -88,10 +92,24 @@ def admin_init():
     game_thread.start()
     return 'Start to run'
 
+@app.route('/admin_stop')
+def admin_stop():
+    global stop_sig
+    stop_sig = True
+    set_value("status", "mode", 2)
+    set_value("status", "turn", 0)
+
+    return 'Stopped'
+
+
 @app.route('/test')
 def test():
     return 'Hello'
 
+@app.route('/move', methods=["POST"])
+def move():
+    print(request.form.to_dict())
+    return '{"result":0, "area":23}'
 
 if __name__ == "__main__":
     app.run()
