@@ -214,6 +214,7 @@ def start_game():
         print("라운드 종료... 통계 확인")
         for i in range(n_team):
             print("Team %d is at sector:%d, health:%d, point:%d, attack_items:"%(i+1, Team_list[i+1].pos, Team_list[i+1].hp, Team_list[i+1].points),*Team_list[i+1].attack_itemlist,", def_items:",*Team_list[i+1].def_itemlist)
+        
         last_attack_list=attack_list
         attack_list=[[] for i in range(n_team+1)]
         input()

@@ -2,17 +2,15 @@
 from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS
 from json import dumps
-from logging.handlers import RotatingFileHandler 
-from flask_login import UserMixin
 from typing import List 
 from firebase_admin import credentials, db
 from threading import Thread, Timer
-import sys, time, firebase_admin
+import sys, time, firebase_admin, random
 
 app = Flask(__name__)
 CORS(app)
-cred = credentials.Certificate("./kaist-freshman-game-firebase-adminsdk-8xps2-5c0970a8f2.json")
-admin = firebase_admin.initialize_app(cred, {'databaseURL': 'https://kai-ground-default-rtdb.firebaseio.com'})
+cred = credentials.Certificate("C:\Programming\KAIGROUND\BACKEND\kaistground-firebase-adminsdk-gmdug-6d30cf4f0d.json")
+admin = firebase_admin.initialize_app(cred, {'databaseURL': 'https://kaistground-default-rtdb.firebaseio.com'})
 game_thread = None
 status = db.reference('status')
 
@@ -21,69 +19,16 @@ T=[120,5,300,5]
 n_team = 26
 n_node = 42
 
-def set_value(ref, child, val):
-    db.reference(ref).child(child).set(val)
-
-def set_interval(func, sec):
-    def func_wrapper():
-        set_interval(func, sec)
-        func()
-    t = Timer(sec, func_wrapper)
-    t.start()
-    return t
-
-def every_second():
-    global time_idx
-
-    #mode 0 : move, 1: bg, 2: wait
-
-    #2분 시작할 때
-    if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
-        turn = time_idx // (T[0] + T[1] + T[2] + T[3]) + 1
-        if turn > 15:
-            sys.exit()
-        set_value("status", "turn", turn)
-        set_value("status", "mode", 0)
-
-    #2분 끝나고 4초
-    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + 4):
-        pass
-
-    #5분 시작할 때
-    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + T[1]):
-        set_value("status", "mode", 1)
-
-    #5분 끝나고 4초
-    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + T[1] + T[2] + 4):
-        pass
-
-
-    # Update
-    time_idx += 1
-    set_value("status", "time_idx", time_idx)
-
-def run_game():
-    global time_idx
-    set_value("status", "mode", 2)
-    time.sleep(1)
-    time_idx = status.child('time_idx').get()
-
-    #initialization from time_idx (For exeption)
-    set_value("status", "turn", time_idx // (T[0] + T[1] + T[2] + T[3]) + 1)
-    if time_idx % (T[0] + T[1] + T[2] + T[3]) < T[0]:
-        set_value("status", "mode", 0)
-    elif (T[0] + T[1]) < time_idx % (T[0] + T[1] + T[2] + T[3]) < (T[0] + T[1] + T[2]):
-        set_value("status", "mode", 1)
-
-    set_interval(every_second, 1)
-
 attack_dictionary = {'개강':{'attack':1, 'range':10}, '퀴즈':{'attack':2, 'range':6}, '무거운 전공책':{'attack':2, 'range':2}, '아침 수업':{'attack':2, 'range':4}, '연습반':{'attack':4, 'range':2}, '기숙사 호실 이동':{'attack':4, 'range':1}, '과제':{'attack':4, 'range':3}, '계절 학기':{'attack':4, 'range':3}, '중간고사':{'attack':6, 'range':2}, '기말고사':{'attack':8, 'range':4}, '실험 수업':{'attack':4, 'range':3}}
 def_dictionary = {'예습복습':{'defense':1, 'armor':0}, '낮잠':{'defense':1, 'armor':0}, '야식':{'defense':1, 'armor':0}, '튜터링':{'defense':1, 'armor':0}, '족보':{'defense':3, 'armor':0}, '공강':{'defense':3, 'armor':0}, '딸기 파티':{'defense':3, 'armor':0}, '축제':{'defense':3, 'armor':0}, '라이프':{'defense':5, 'armor':0}, '수강 철회':{'defense':7, 'armor':0}}
-up_armor_dictionary = {'카이 야잠':2, '카이 돕바':2, '체크남방':2, '카이 후드티':2} #22, 23, 26, 27
-down_armor_dictionary = {'청바지':1, '카고바지':1} #24, 25
+up_armor_dictionary = {'카이 야잠':2, '카이 돕바':2, '체크남방':2, '카이 후드티':2, '':0} #22, 23, 26, 27
+down_armor_dictionary = {'청바지':1, '카고바지':1, '':0} #24, 25
 
 id_to_item=['','개강','퀴즈','무거운 전공책','아침 수업','기숙사 호실 이동','연습반','과제','실험 수업','계절 학기','중간고사','기말고사','예습복습','낮잠','야식','튜터링','족보','공강','딸기 파티','축제','라이프','수강 철회','카이 야잠','카이 돕바','청바지','카고바지','체크남방','카이 후드티']
 item_to_id={'': 0, '개강': 1, '퀴즈': 2, '무거운 전공책': 3, '아침 수업': 4, '기숙사 호실 이동': 5, '연습반': 6, '과제': 7, '실험 수업': 8, '계절 학기': 9, '중간고사': 10, '기말고사': 11, '예습복습': 12, '낮잠': 13, '야식': 14, '튜터링': 15, '족보': 16, '공강': 17, '딸기 파티': 18, '축제': 19, '라이 프': 20, '수강 철회': 21, '카이 야잠': 22, '카이 돕바': 23, '청바지': 24, '카고바지': 25, '체크남방': 26, '카이 후드티': 27}
+item_set_left=[[], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4]]
+minigame_ppt_idx=[[],[]]
+item_set_av=[]
 
 class Node:
     def __init__(self, nd_id, items, teams, adj):
@@ -120,20 +65,6 @@ class graph:
         self.g[nd_id].teams.append(team_id)
         return 1
 
-    def show_item_nd(self, nd_id):
-        for i in self.g[nd_id].items:
-            print(i.name)
-
-    def show_teams(self):
-        for i in range(n_node+1):
-            if self.g[i].teams!=[]:
-                print("At sector %d: teams"%(i),*self.g[i].teams,"are here")
-
-    def show_items(self):
-        for i in range(n_node+1):
-            if self.g[i].teams!=[]:
-                print("At sector %d: items"%(i),*self.g[i].items,"are here")
-
 mp=graph(n_node)
 
 class Team:
@@ -152,8 +83,7 @@ class Team:
         if self.sleep: return
         self.hp+=health
         if self.hp<=0:
-            self.sleep=1
-            print("Team %d는 수면상태에 빠집니다."%(self.id))
+            self.sleep=1;self.hp=0
             self.update_point(-5)
 
     def update_point(self, point):
@@ -177,7 +107,6 @@ class Team:
 
     def move_team(self, nd_id, init=0, mp:graph=mp):
         if not mp.move_g(nd_id, self.pos, self.id, init):
-            raise Exception("Invalid Move")
             return
         self.pos = nd_id        
 
@@ -193,7 +122,7 @@ class Team:
         rt=[]
         for i in range(1,n_node+1):
             if mp.dis_node(self.pos, i)<=3:
-                rt += [i]
+                rt+=[i]
         return rt
 
 Team_list = [Team(0,0,0,[],[],0)]+[Team(i+1,10,0,['개강'],[],0) for i in range(n_team)]
@@ -210,24 +139,16 @@ def attack(a:Team, b:Team, attack_item:str): #a attack b with attack_item
 def page_not_found(error):
     return "<h1>Wrong Access</h1>", 404
 
-@app.route('/admin_init')
-def admin_init():
-    idx = request.args.get('time_idx')
-
-    if idx is not None:
-        set_value("status", "time_idx", int(idx))
-    else:
-        set_value("status", "time_idx", 0)
-
-    game_thread = Thread(target=run_game)
-    game_thread.start()
-    return 'Start to run'
-
 @app.route("/move", methods=['POST'])
 def res_move():
     global attack_list, last_attack_list, Team_list, mp
     data = request.get_json()
-    team_id=data['me'];area=data['area']
+    team_id=data['me'];area=data['area'];init=data['initial']
+    if not init:
+        Team_list[team_id].move_team(area,init=1)
+        return jsonify({'result':0,'area':area})
+    if Team_list[team_id].sleep:
+        return jsonify({'result':2,'area':0})
     av_sec=Team_list[team_id].moveable_sections()
     if area in av_sec:
         Team_list[team_id].move_team(area)
@@ -279,13 +200,6 @@ def res_defense():
         else: dic[item_to_id[i]]+=1
     return jsonify({'result':0,'defense_list':dumps(dic)})
 
-@app.route("/armor", methods=['GET'])
-def res_armor():
-    global attack_list, last_attack_list, Team_list, mp
-    team_id:int = request.args.get('me')
-    Team_list[team_id].up_armor
-    return jsonify({'top':Team_list[team_id].up_armor,'bottom':Team_list[team_id].down_armor})
-
 @app.route("/inventory", methods=['GET'])
 def res_inventory():
     global attack_list, last_attack_list, Team_list, mp
@@ -300,8 +214,7 @@ def res_inventory():
         if item_to_id[i] not in dic_attk.keys():
             dic_attk[item_to_id[i]]=1
         else: dic_attk[item_to_id[i]]+=1
-
-    return jsonify({'attack_list':dumps(dic_attk),'defense_list':dumps(dic_def)})
+    return jsonify({'attack_list':dumps(dic_attk),'defense_list':dumps(dic_def),'top':item_to_id[Team_list[team_id].up_armor],'bottom':item_to_id[Team_list[team_id].down_armor]})
 
 @app.route("/get_attack", methods=['GET'])
 def res_get_attack():
@@ -314,56 +227,139 @@ def res_get_attack():
 
 @app.route("/minigame", methods=['GET'])
 def res_minigame():
-    global attack_list, last_attack_list, Team_list, mp
+    global attack_list, last_attack_list, Team_list, mp, item_set_left
     team_id:int=request.args.get('me')
     sec=Team_list[team_id].pos
     dic=dict()
-    for i in mp.g[sec].items:
-        if i not in dic.keys():
-            dic[i]=1
-        else: dic[i]+=1
+    for i in range(len(mp.g[sec].items)):
+        dic_item=dict()
+        dic_item['item1']=mp.g[sec].items[i][0]
+        dic_item['item2']=mp.g[sec].items[i][1]
+        dic_item['cnt']=item_set_left[sec][i]
+        dic[i]=dic_item
     return jsonify({'data':dumps(dic)})
 
 @app.route("/miniselect", methods=['POST'])
 def res_miniselect():
-    global attack_list, last_attack_list, Team_list, mp
+    global attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, minigame_ppt_idx
     data = request.get_json()
-    team_id=data['me'];sel=data['select']
-    #Todo
-    return jsonify({'result':,'page_num':})
+    team_id=data['me'];sel=data['select'];sec=Team_list[team_id].pos
+    if item_set_left[sec][sel]==0:
+        return jsonify({'result':1,'page_num':-1})
+    if item_set_av[team_id][sec][sel]:
+        return jsonify({'result':2,'page_num':-1})
+    item_set_left[sec][sel]-=1;item_set_av[team_id][sec][sel]=1
+    return jsonify({'result':0,'page_num':minigame_ppt_idx[sec][sel]}) #minigame_ppt_idx[sec][sel]
 
 @app.route("/minisuccess", methods=['POST'])
 def res_minisuccess ():
-    global attack_list, last_attack_list, Team_list, mp
+    global attack_list, last_attack_list, Team_list, mp, item_set_left
     data = request.get_json()
     team_id=data['me'];sel=data['select'];suc=data['success']
     pos=Team_list[team_id].pos
     if not suc:
         for i in mp.g[pos].items[sel]:
             Team_list[team_id].add_item_by_index(i)
+    else:
+        item_set_left[pos][sel]+=1
     return jsonify({'result':0})
 
+#firebase update
+def set_value(ref, child, val):
+    db.reference(ref).child(child).set(val)
 
-@app.route("/test", methods=['GET', 'POST', 'PUT', 'DELETE'])
-def test():
-    if request.method == 'POST':
-        print('POST')
-        data = request.get_json()  #data is dict
-        print(data)
-        print(data['email'])
-    if request.method == 'GET':
-        print('GET')
-        user = request.args.get('email')
-        print(user)
-    if request.method == 'PUT':
-        print('PUT')
-        user = request.args.get('email')
-        print(user)
-    if request.method == 'DELETE':
-        print('DELETE')
-        user = request.args.get('email')
-        print(user)
-    return make_response(jsonify({'status': True}), 200)
+def update_database():
+    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av
+    dic=dict()
+    for i in range(n_team):
+        dic[i+1]=Team_list[i+1].pos
+    db.reference("pos").set(dic)
+    for i in range(n_team):
+        dic[i+1]=Team_list[i+1].hp
+    db.reference("stamina").set(dic)
+    for i in range(n_team):
+        dic[i+1]=Team_list[i+1].points
+    db.reference("point").set(dic)
+
+def set_interval(func, sec):
+    def func_wrapper():
+        set_interval(func, sec)
+        func()
+    t = Timer(sec, func_wrapper)
+    t.start()
+    return t
+
+def every_second():
+    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av
+    #mode 0 : move, 1: bg, 2: wait
+    #2분 시작할 때
+    if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
+        turn = time_idx // (T[0] + T[1] + T[2] + T[3]) + 1
+        if turn > 15:
+            sys.exit()
+        set_value("status", "turn", turn)
+        set_value("status", "mode", 0)
+    #2분 끝나고 3초
+    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + 3):
+        for i in range(n_team):
+            if Team_list[i+1].sleep:
+                Team_list[i+1].sleep=0
+                Team_list[i+1].hp=10+up_armor_dictionary[Team_list[i+1].up_armor]+down_armor_dictionary[Team_list[i+1].down_armor]
+                Team_list[i+1].move_team(random.randint(1,n_node),init=1)
+        update_database()
+    #5분 시작할 때
+    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + T[1]):
+        set_value("status", "mode", 1)
+    #5분 끝나고 3초
+    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + T[1] + T[2] + 3):
+        for i in range(n_team):
+            update_pt=[]
+            for j in last_attack_list[i+1]:
+                if j[1]>0:
+                    Team_list[i+1].update_health(-j[1])
+                update_pt.append([j[1],j[0]])
+            if Team_list[i+1].sleep:
+                for j in update_pt: j[0]=10
+            for j in update_pt:
+                if j[0]>0: Team_list[j[1]].update_point(j[0])
+        for i in range(n_team):
+            if Team_list[i+1].sleep:
+                Team_list[i+1].move_team(0,init=1)
+        update_database()
+        last_attack_list=attack_list
+        attack_list=[[] for i in range(n_team+1)]
+    
+    time_idx += 1
+    set_value("status", "time_idx", time_idx)
+
+def run_game():
+    global time_idx
+    set_value("status", "mode", 2)
+    time.sleep(1)
+    time_idx = status.child('time_idx').get()
+    set_value("status", "turn", time_idx // (T[0] + T[1] + T[2] + T[3]) + 1)
+    if time_idx % (T[0] + T[1] + T[2] + T[3]) < T[0]:
+        set_value("status", "mode", 0)
+    elif (T[0] + T[1]) < time_idx % (T[0] + T[1] + T[2] + T[3]) < (T[0] + T[1] + T[2]):
+        set_value("status", "mode", 1)
+    set_interval(every_second, 1)
+
+@app.route('/admin_init')
+def admin_init():
+    idx = request.args.get('time_idx')
+    if idx is not None:
+        set_value("status", "time_idx", int(idx))
+    else:
+        set_value("status", "time_idx", 0)
+    game_thread = Thread(target=run_game)
+    game_thread.start()
+    return 'Start to run'
 
 if __name__=="__main__":
-    app.run(host='127.0.0.1', port=5000, debug=1)
+    for i in range(n_team+1):
+        item_set_av.append([])
+        for j in range(n_node+1):
+            item_set_av[i].append([])
+            for k in range(3):
+                item_set_av[i][j].append(0)
+    app.run(host="172.30.1.25", port=5555, debug=1)
