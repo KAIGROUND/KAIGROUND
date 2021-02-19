@@ -32,6 +32,7 @@ minigame_ppt_idx=[[], [[129, 2], [400, 17], [94, 1]], [[8, 2], [20, 5], [177, 3]
 item_set_av=[]
 moved = [0 for i in range(n_team+1)]
 attacked = [0 for i in range(n_team+1)]
+defended = dict()
 check_update_point=1
 
 class Node:
@@ -147,7 +148,11 @@ def page_not_found(error):
 def res_move(): 
     global attack_list, last_attack_list, Team_list, mp, moved
     data = request.get_json()
+    if not data['area'].isdigit():
+        return jsonify({'result':1,'err_msg':'이동할 구역은 숫자이여야 합니다.'})
     team_id=int(data['me']);area=int(data['area']);init=int(data['initial'])
+    if not (1<=area<=n_node):
+        return jsonify({'result':1,'err_msg':'이동할 구역은 1~42 사이의 숫자이여야 합니다.'})
     if moved[team_id]:
         return jsonify({'result':1,'err_msg':'한 턴에는 한번만 이동할 수 있습니다.'})
     moved[team_id]=1
@@ -167,7 +172,11 @@ def res_move():
 def res_attack():
     global attack_list, last_attack_list, Team_list, mp, attacked
     data = request.get_json()
+    if not data['classroom'].isdigit():
+        return jsonify({'result':1,'err_msg':'공격할 반은 숫자이여야 합니다.'})
     team_id=int(data['me']);team_to_attack=int(data['classroom']);item_id=int(data['item'])
+    if not (1<=team_to_attack<=n_team):
+        return jsonify({'result':1,'err_msg':'공격할 반은 1~26 사이의 숫자이여야 합니다.'})
     if attacked[team_id]:
         return jsonify({'result':1,'err_msg':'한 턴에 두번 공격할 수 없습니다.'})
     attacked[team_id]=1
@@ -175,6 +184,8 @@ def res_attack():
     if attack_item not in Team_list[team_id].attack_itemlist:
         return jsonify({'result':1,'err_msg':'인벤토리에 해당 아이템이 없습니다.'})
     av_attk=Team_list[team_id].attackable_teams(attack_item)
+    if team_to_attack==team_id:
+        return jsonify({'result':1,'err_msg':'자신의 팀을 공격할 수 없습니다.'})
     if team_to_attack not in av_attk:
         return jsonify({'result':1,'err_msg':'해당 팀을 공격하기에는 너무 멀리 있습니다.'})
     attack(Team_list[team_id],Team_list[team_to_attack],attack_item)
@@ -189,9 +200,12 @@ def res_attack():
     
 @app.route("/defense", methods=['POST'])
 def res_defense():
-    global attack_list, last_attack_list, Team_list, mp
+    global attack_list, last_attack_list, Team_list, mp, defended
     data = request.get_json()
     team_id=int(data['me']);team_to_defend=int(data['classroom']);item_id=int(data['item'])
+    if (team_id,team_to_defend) in defended.keys():
+        return jsonify({'result':1,'err_msg':'해당 공격에 대해서는 이미 방어 아이템을 사용 했습니다.'})
+    defended[(team_id,team_to_defend)]=1
     def_item=id_to_item[item_id]
     if def_item not in Team_list[team_id].def_itemlist:
         return jsonify({'result':1,'err_msg':'인벤토리에 해당 아이템이 없습니다.'})
@@ -304,7 +318,7 @@ def set_interval(func, sec):
     return t
 
 def every_second():
-    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point
+    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended
     #mode 0 : move, 1: bg, 2: wait
     #2분 시작할 때
     if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
@@ -345,6 +359,7 @@ def every_second():
         last_attack_list=attack_list
         attack_list=[[] for i in range(n_team+1)]
         attacked = [0 for i in range(n_team+1)]
+        defended=dict()
     time_idx += 1
     set_value("status", "time_idx", time_idx)
 
