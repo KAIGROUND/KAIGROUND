@@ -33,7 +33,7 @@ item_set_av=[]
 moved = [0 for i in range(n_team+1)]
 attacked = [0 for i in range(n_team+1)]
 defended = dict()
-check_update_point=1
+check_update_point=1;end_of_game=1
 
 class Node:
     def __init__(self, nd_id, items, teams, adj):
@@ -158,14 +158,14 @@ def res_move():
     moved[team_id]=1
     if not init:
         Team_list[team_id].move_team(area,init=1)
-        return jsonify({'result':0,'area':area})
+        return jsonify({'result':0,'area':area,'suc_msg':'구역 %d로 이동했습니다.'%(area)})
     if Team_list[team_id].sleep:
         moved[team_id]=0
         return jsonify({'result':2,'err_msg':'수면상태에 빠져 있으므로 이동할 수 없습니다.'})
     av_sec=Team_list[team_id].moveable_sections()
     if area in av_sec:
         Team_list[team_id].move_team(area)
-        return jsonify({'result':0,'area':area})
+        return jsonify({'result':0,'area':area,'suc_msg':'구역 %d로 이동했습니다.'%(area)})
     else: 
         moved[team_id]=0
         return jsonify({'result':1,'err_msg':'해당 지역과의 거리가 너무 멀어서 이동할 수 없습니다.'})
@@ -201,7 +201,7 @@ def res_attack():
         if item_to_id[i] not in dic.keys():
             dic[item_to_id[i]]=1
         else: dic[item_to_id[i]]+=1
-    return jsonify({'result':0,'attack_list':dumps(dic)})
+    return jsonify({'result':0,'attack_list':dumps(dic),'suc_msg':'팀 %d에게 공격력이 %d인 %s으로 공격 했습니다!'%(team_to_attack,attack_dictionary[attack_item]['attack'],attack_item)})
     
 @app.route("/defense", methods=['POST'])
 def res_defense():
@@ -215,11 +215,11 @@ def res_defense():
     if def_item not in Team_list[team_id].def_itemlist:
         defended[(team_id,team_to_defend)]=0
         return jsonify({'result':1,'err_msg':'인벤토리에 해당 아이템이 없습니다.'})
-    fl=0
+    fl=0;attack_item=''
     for i in range(len(last_attack_list[team_id])):
         if last_attack_list[team_id][i][0]==team_to_defend: 
             last_attack_list[team_id][i][1]-=def_dictionary[def_item]['defense'] #lastattacklist[id][i][1] can be minus!!!!
-            fl=1
+            attack_item=last_attack_list[team_id][i][2];fl=1
     if not fl:
         defended[(team_id,team_to_defend)]=0
         return jsonify({'result':1,'err_msg':'해당 팀은 본 팀을 공격하지 않았습니다.'})
@@ -229,7 +229,7 @@ def res_defense():
         if item_to_id[i] not in dic.keys():
             dic[item_to_id[i]]=1
         else: dic[item_to_id[i]]+=1
-    return jsonify({'result':0,'defense_list':dumps(dic)})
+    return jsonify({'result':0,'defense_list':dumps(dic),'suc_msg':'%s 아이템으로 팀 %d의 %s 공격의 피해를 %d만큼 감소시킵니다.'%(def_item,team_to_defend,attack_item,def_dictionary[def_item]['defense'])})
 
 @app.route("/inventory", methods=['GET'])
 def res_inventory():
@@ -335,7 +335,22 @@ def every_second():
     #2분 시작할 때
     if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
         turn = (time_idx // (T[0] + T[1] + T[2] + T[3])) + 1
-        if turn >= 15:
+        if turn > 16 and end_of_game:
+            end_of_game=0
+            for i in range(n_team):
+                update_pt=[]
+                for j in last_attack_list[i+1]:
+                    if j[1]>0:
+                        Team_list[i+1].update_health(-j[1])
+                    update_pt.append([j[1],j[0]])
+                if Team_list[i+1].sleep:
+                    for j in update_pt: j[0]=10
+                for j in update_pt:
+                    if j[0]>0: Team_list[j[1]].update_point(j[0])
+            for i in range(n_team):
+                if Team_list[i+1].sleep:
+                    Team_list[i+1].move_team(0,init=1)
+            update_database()
             sys.exit()
         set_value("status", "turn", turn)
         set_value("status", "mode", 0)
@@ -406,7 +421,6 @@ def res_stop():
     stop_sig = True
     set_value("status", "mode", 2)
     set_value("status", "turn", 0)
-
     return 'Stopped'
 
 @app.route('/')
