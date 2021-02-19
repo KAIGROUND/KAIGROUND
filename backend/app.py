@@ -208,7 +208,7 @@ def res_defense():
     global attack_list, last_attack_list, Team_list, mp, defended
     data = request.get_json()
     team_id=int(data['me']);team_to_defend=int(data['classroom']);item_id=int(data['item'])
-    if (team_id,team_to_defend) in defended.keys():
+    if (team_id,team_to_defend) in defended.keys() and defended[(team_id,team_to_defend)]:
         return jsonify({'result':1,'err_msg':'해당 공격에 대해서는 이미 방어 아이템을 사용 했습니다.'})
     defended[(team_id,team_to_defend)]=1
     def_item=id_to_item[item_id]
@@ -216,9 +216,9 @@ def res_defense():
         defended[(team_id,team_to_defend)]=0
         return jsonify({'result':1,'err_msg':'인벤토리에 해당 아이템이 없습니다.'})
     fl=0
-    for i in last_attack_list[team_id]:
-        if i[0]==team_to_defend: 
-            last_attack_list[team_id][1]-=def_dictionary[def_item]['defense'] #lastattacklist[id][1] can be minus!!!!
+    for i in range(len(last_attack_list[team_id])):
+        if last_attack_list[team_id][i][0]==team_to_defend: 
+            last_attack_list[team_id][i][1]-=def_dictionary[def_item]['defense'] #lastattacklist[id][i][1] can be minus!!!!
             fl=1
     if not fl:
         defended[(team_id,team_to_defend)]=0
@@ -276,6 +276,8 @@ def res_miniselect():
     global attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, minigame_ppt_idx
     data = request.get_json()
     team_id=int(data['me']);sel=int(data['select']);sec=Team_list[team_id].pos
+    if not (0<=sel<=2):
+        return jsonify({'result':1,'err_msg':'select 숫자가 0~2가 아닙니다.'})
     if item_set_left[sec][sel]==0:
         return jsonify({'result':1,'err_msg':'해당 아이템 세트 수량이 부족해 도전할 수 없습니다.'})
     if item_set_av[team_id][sec][sel]:
@@ -288,6 +290,8 @@ def res_minisuccess ():
     global attack_list, last_attack_list, Team_list, mp, item_set_left
     data = request.get_json()
     team_id=int(data['me']);sel=int(data['select']);suc=int(data['success'])
+    if not (0<=sel<=2):
+        return jsonify({'result':1,'err_msg':'select 숫자가 0~2가 아닙니다.'})
     pos=Team_list[team_id].pos
     if not suc:
         for i in mp.g[pos].items[sel]:
