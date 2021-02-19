@@ -2,6 +2,7 @@
     <v-card
             class="mx-auto"
             :max-width="narrow ? 230 : 460"
+            :height="narrow ? 400 : 'auto'"
     >
 
         <v-img

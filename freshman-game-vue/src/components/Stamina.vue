@@ -8,27 +8,34 @@
         <v-simple-table>
             <tbody>
             <tr v-for="item in 13" :key="item" :bgcolor="item%2 ? '#EEEEEE': ''">
-                <td style="width:10%; padding: 0 0 0 12px">{{ item }}</td>
-                <td style="width:40%">
-                    <v-progress-linear
-                            :color="getCol(st(item))"
-                            :value="st(item)"
-                            style="height: 12px"
-                            :buffer-value="st(item) === 0 ? 0 : 100"
-                            stream
-                            rounded
-                    />
+                <td style="width:10%; padding: 0 0 0 12px" :class="class_accent(item)">{{ item }}</td>
+                <td style="width:40%" :class="class_accent(item)">
+                    <div style="text-align: center">
+                        <v-progress-linear
+                                :color="getCol(st(item))"
+                                :value="st(item)"
+                                style="height: 12px; margin-top: 12px; margin-bottom: -4px"
+                                :buffer-value="st(item) === 0 ? 0 : 100"
+                                stream
+                                rounded
+                        />
+                        <span style="font-size: 0.8em;">{{st(item)/10 === 0 ? 'respawn...' : st(item)/10}}</span>
+                    </div>
+
                 </td>
-                <td style="width:10%; padding: 0 0 0 12px">{{ item+13 }}</td>
-                <td style="width:40%">
-                    <v-progress-linear
-                            :color="getCol(st(item+13))"
-                            :value="st(item+13)"
-                            style="height: 12px"
-                            :buffer-value="st(item+13) === 0 ? 0 : 100"
-                            stream
-                            rounded
-                    />
+                <td style="width:10%; padding: 0 0 0 12px" :class="class_accent(item+13)">{{ item+13 }}</td>
+                <td style="width:40%" :class="class_accent(item+13)">
+                    <div style="text-align: center">
+                        <v-progress-linear
+                                :color="getCol(st(item+13))"
+                                :value="st(item+13)"
+                                style="height: 12px; margin-top: 12px; margin-bottom: -4px"
+                                :buffer-value="st(item+13) === 0 ? 0 : 100"
+                                stream
+                                rounded
+                        />
+                        <span style="font-size: 0.8em;">{{st(item+13)/10 === 0 ? 'respawn...' : st(item+13)/10}}</span>
+                    </div>
                 </td>
             </tr>
             </tbody>
@@ -53,7 +60,10 @@
             },
             st(idx){
                 return this.stamina_list[idx]?this.stamina_list[idx]:0;
-            }
+            },
+            class_accent(idx){
+                return this.$store.state.class === idx.toString() ? 'amber lighten-3' : ''
+            },
         },
         mounted() {
             const stamina = this.$firebase.database().ref('stamina')
