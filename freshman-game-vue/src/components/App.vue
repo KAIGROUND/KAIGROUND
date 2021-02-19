@@ -34,7 +34,14 @@
             <Footer :turn="turn"/>
           </v-col>
         </v-row>
-        <v-row no-gutters dense><Header/></v-row>
+        <v-row no-gutters dense>
+          <v-col cols="1" >
+            <v-icon @click="launch_minigame">mdi-controller-classic</v-icon>
+          </v-col>
+          <v-col cols="11">
+            <Header/>
+          </v-col>
+        </v-row>
       </v-container>
     </div>
   </v-app>
@@ -74,11 +81,11 @@ export default {
       mode: 2,
       timer: 0,
       turn: 0,
-      inventory_attack: {"1":1,"2": 2, "3":2, "4":1,"5": 2, "6":2},
-      inventory_defense: {"12": 5, "20": 1,"22":1, "27":1},
-      armor_top: 22,
-      armor_bottom: 25,
-      team_list: {"2": 17, "15": 5},
+      inventory_attack: {},
+      inventory_defense: {},
+      armor_top: 0,
+      armor_bottom: 0,
+      team_list: {},
       prices: {},
       minigame_mode: false,
     })
@@ -150,11 +157,12 @@ export default {
     },
 
     launch_minigame(){
-      this.$http.get(`${this.$host}minigame?me=${this.$store.state.class}`).then(result =>{
-        this.prices = result.data
-        this.minigame_mode = true
-      })
-
+      if(!this.minigame_mode){
+        this.$http.get(`${this.$host}minigame?me=${this.$store.state.class}`).then(result =>{
+          this.prices = result.data
+          this.minigame_mode = true
+        })
+      } else this.minigame_mode = false
     },
     update_ainv(list){
       this.inventory_attack=list
