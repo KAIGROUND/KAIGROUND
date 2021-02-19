@@ -5,7 +5,7 @@
             <span>Inventory</span>
         </div>
         <v-divider/>
-        <v-container id="scroll-target" style="max-height: 600px; padding: 0" class="overflow-y-auto">
+        <v-container id="scroll-target" style="max-height: 620px; padding: 0" class="overflow-y-auto">
             <v-row no-gutters>
                 <v-col cols="6" class="subtitle">
                     Attack
@@ -16,71 +16,73 @@
                 </v-col>
             </v-row>
             <v-divider/>
-            <div v-for="i in Math.max(this.attack_item.length, this.defense_item.length)" v-bind:key="i">
+            <div v-for="i in Math.max(Object.keys(inventory_attack).length, Object.keys(inventory_defense).length)" v-bind:key="i">
                 <v-row no-gutters class="ma-0" :class="i%2?'bg-grey':''">
-                    <v-col cols="5" class="count" v-ripple>
-                        {{(attack_item[i-1]) ? attack_item[i-1].name: ''}}
+                    <v-col cols="5" class="count" v-ripple style="text-align: left" @click="showDesc(Object.keys(inventory_attack)[i-1])">
+                        <InventoryItem v-if="Object.keys(inventory_attack)[i-1]" :src="get_src(Object.keys(inventory_attack)[i-1])" :name="id_to_item[Object.keys(inventory_attack)[i-1]]"></InventoryItem>
                     </v-col>
                     <v-divider vertical/>
                     <v-col cols="1" class="count">
-                        {{(attack_item[i-1]) ? attack_item[i-1].count : ''}}
+                         <div class="count-num">
+                            {{(Object.keys(inventory_attack)[i-1]) ? Object.values(inventory_attack)[i-1] : ''}}
+                         </div>
                     </v-col>
                     <v-divider vertical/>
-                    <v-col cols="5" class="count" v-ripple>
-                        {{(defense_item[i-1]) ? defense_item[i-1].name : ''}}
+                    <v-col cols="5" class="count" v-ripple style="text-align: left" @click="showDesc(Object.keys(inventory_defense)[i-1])">
+                        <InventoryItem v-if="Object.keys(inventory_defense)[i-1]" :src="get_src(Object.keys(inventory_defense)[i-1])" :name="id_to_item[Object.keys(inventory_defense)[i-1]]"></InventoryItem>
                     </v-col>
                     <v-divider vertical/>
                     <v-col cols="1" class="count">
-                        {{(defense_item[i-1]) ? defense_item[i-1].count : ''}}
+                        <div class="count-num">
+                            {{(Object.keys(inventory_defense)[i-1]) ? Object.values(inventory_defense)[i-1] : ''}}
+                        </div>
                     </v-col>
                 </v-row>
                 <v-divider/>
             </div>
         </v-container>
 
+        <v-dialog
+                v-model="dialog_a"
+                max-width="460"
+        >
+            <InventoryDesc :id="dialog_id" :count="dialog_count"></InventoryDesc>
+        </v-dialog>
+
     </v-card>
 
 </template>
 
 <script>
+    import InventoryItem from "./InventoryItem";
+    import InventoryDesc from "./InventoryDesc";
     export default {
         name: "Inventory",
+        components: {InventoryDesc, InventoryItem},
+        props: ["inventory_defense", "inventory_attack"],
         data(){
             return({
-                attack_item: [
-                    {name: "아이템1", count:1},
-                    {name: "아이템2", count:3},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:99},
-
-                ],
-                defense_item: [
-                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템2", count:31, src: ''},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:9},
-                    {name: "아이템5", count:99},
-                    {name: "아이템6", count:99},
-                    {name: "아이템1", count:0},
-                    {name: "아이템2", count:31},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:9},
-                    {name: "아이템5", count:99},
-                    {name: "아이템6", count:99},
-                    {name: "아이템1", count:0},
-                    {name: "아이템2", count:31},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:9},
-                    {name: "아이템5", count:99},
-                    {name: "아이템6", count:99},
-                    {name: "아이템1", count:0},
-                    {name: "아이템2", count:31},
-                    {name: "아이템3", count:0},
-                    {name: "아이템4", count:9},
-                    {name: "아이템5", count:99},
-                    {name: "아이템6", count:99},
-                ],
+                id_to_item:['','개강','퀴즈','무거운 전공책','아침 수업','기숙사 호실이','연습반','과제','실험 수업','계절 학기','중간고사','기말고사','예습복습','낮잠','야식','튜터링','족보','공강','딸기 파티','축제','라이프','수강 철회','카이 야잠','카이 돕바','청바지','카고바지','체크남방','카이 후드티'],
+                dialog_a: false,
+                dialog_id: 1,
+                dialog_count: 0
             })
+        },
+        methods:{
+            get_src(id){
+                try{
+                    return require(`../assets/item/${id}.png`)
+                } catch(e) {
+                    return 'https://img.icons8.com/ios/452/sword.png'
+                }
+            },
+            showDesc(id){
+                if(id !== undefined){
+                    this.dialog_a = true
+                    this.dialog_id = id
+                    this.dialog_count = id < 12 ? this.inventory_attack[id.toString()] : this.inventory_defense[id.toString()]
+                }
+            }
         },
     }
 </script>
@@ -97,12 +99,15 @@
         text-align: center;
         font-size: 1em;
         font-weight: bold;
-        margin: 4px -1px 4px 0;
+        margin: 4px -1.5px 4px 0;
     }
     .count{
         text-align: center;
-        padding: 6px 0 6px 0;
-        margin-right: -1px;
+        margin-right: -1.5px;
+        height: 64px;
+    }
+    .count-num{
+        padding-top: 18px;
     }
     .bg-grey{
         background: #EEEEEE;

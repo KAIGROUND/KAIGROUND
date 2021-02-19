@@ -5,13 +5,13 @@
             <span>Point</span>
         </div>
         <v-divider></v-divider>
-        <v-simple-table dense>
+        <v-simple-table>
             <tbody>
             <tr v-for="item in 13" :key="item.name" :bgcolor="item%2 ? '#EEEEEE': ''">
                 <td style="width:10%; padding: 0 0 0 12px">{{ item }}</td>
-                <td style="text-align: center; font-weight: bold">{{item*15}}</td>
+                <td style="text-align: center; font-weight: bold">{{point_list[item] ? point_list[item] : 0}}</td>
                 <td style="width:10%; padding: 0 0 0 12px">{{ item + 13 }}</td>
-                <td style="text-align: center; font-weight: bold">{{item}}</td>
+                <td style="text-align: center; font-weight: bold">{{point_list[item+13] ? point_list[item+13] : 0}}</td>
             </tr>
             </tbody>
         </v-simple-table>
@@ -21,7 +21,20 @@
 
 <script>
     export default {
-        name: "Point"
+        name: "Point",
+        data(){
+            return ({
+                point_list: []
+            })
+        },
+        mounted() {
+            const point = this.$firebase.database().ref('point')
+            point.on("value", snapshot => {
+                for(let i in snapshot.val()){
+                    this.$set(this.point_list, i, snapshot.val()[i])
+                }
+            })
+        },
     }
 </script>
 
