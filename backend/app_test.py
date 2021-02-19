@@ -9,15 +9,15 @@ import sys, time, firebase_admin, random
 
 app = Flask(__name__)
 CORS(app)
-cred = credentials.Certificate("C:\Programming\kaistground-firebase-adminsdk-gmdug-6d30cf4f0d.json")
+cred = credentials.Certificate("C:\Programming\KAIGROUND\BACKEND\kaistground-firebase-adminsdk-gmdug-6d30cf4f0d.json")
 admin = firebase_admin.initialize_app(cred, {'databaseURL':'https://kaistground-default-rtdb.firebaseio.com'})
 game_thread = None
 status = db.reference('status')
 stop_sig = False
 
 time_idx=None
-T=[120,5,300,5]
-n_team = 26
+T=[20,5,30,5]
+n_team = 4
 n_node = 42
 
 attack_dictionary = {'개강':{'attack':1, 'range':10}, '퀴즈':{'attack':2, 'range':6}, '무거운 전공책':{'attack':2, 'range':2}, '아침 수업':{'attack':2, 'range':4}, '연습반':{'attack':4, 'range':2}, '기숙사 호실 이동':{'attack':4, 'range':1}, '과제':{'attack':4, 'range':3}, '계절 학기':{'attack':4, 'range':3}, '중간고사':{'attack':6, 'range':2}, '기말고사':{'attack':8, 'range':4}, '실험 수업':{'attack':4, 'range':3}}
@@ -345,6 +345,7 @@ def every_second():
         last_attack_list=attack_list
         attack_list=[[] for i in range(n_team+1)]
         attacked = [0 for i in range(n_team+1)]
+
     time_idx += 1
     set_value("status", "time_idx", time_idx)
 
