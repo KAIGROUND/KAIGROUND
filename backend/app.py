@@ -160,12 +160,14 @@ def res_move():
         Team_list[team_id].move_team(area,init=1)
         return jsonify({'result':0,'area':area})
     if Team_list[team_id].sleep:
+        moved[team_id]=0
         return jsonify({'result':2,'err_msg':'수면상태에 빠져 있으므로 이동할 수 없습니다.'})
     av_sec=Team_list[team_id].moveable_sections()
     if area in av_sec:
         Team_list[team_id].move_team(area)
         return jsonify({'result':0,'area':area})
     else: 
+        moved[team_id]=0
         return jsonify({'result':1,'err_msg':'해당 지역과의 거리가 너무 멀어서 이동할 수 없습니다.'})
 
 @app.route("/attack", methods=['POST'])
@@ -182,11 +184,14 @@ def res_attack():
     attacked[team_id]=1
     attack_item=id_to_item[item_id]
     if attack_item not in Team_list[team_id].attack_itemlist:
+        attacked[team_id]=0
         return jsonify({'result':1,'err_msg':'인벤토리에 해당 아이템이 없습니다.'})
     av_attk=Team_list[team_id].attackable_teams(attack_item)
     if team_to_attack==team_id:
+        attacked[team_id]=0
         return jsonify({'result':1,'err_msg':'자신의 팀을 공격할 수 없습니다.'})
     if team_to_attack not in av_attk:
+        attacked[team_id]=0
         return jsonify({'result':1,'err_msg':'해당 팀을 공격하기에는 너무 멀리 있습니다.'})
     attack(Team_list[team_id],Team_list[team_to_attack],attack_item)
     if attack_item!='개강':
@@ -208,6 +213,7 @@ def res_defense():
     defended[(team_id,team_to_defend)]=1
     def_item=id_to_item[item_id]
     if def_item not in Team_list[team_id].def_itemlist:
+        defended[(team_id,team_to_defend)]=0
         return jsonify({'result':1,'err_msg':'인벤토리에 해당 아이템이 없습니다.'})
     fl=0
     for i in last_attack_list[team_id]:
@@ -215,6 +221,7 @@ def res_defense():
             last_attack_list[team_id][1]-=def_dictionary[def_item]['defense'] #lastattacklist[id][1] can be minus!!!!
             fl=1
     if not fl:
+        defended[(team_id,team_to_defend)]=0
         return jsonify({'result':1,'err_msg':'해당 팀은 본 팀을 공격하지 않았습니다.'})
     Team_list[team_id].remove_defitem(def_item)
     dic=dict()
@@ -324,7 +331,7 @@ def every_second():
     #2분 시작할 때
     if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
         turn = (time_idx // (T[0] + T[1] + T[2] + T[3])) + 1
-        if turn > 15:
+        if turn >= 15:
             sys.exit()
         set_value("status", "turn", turn)
         set_value("status", "mode", 0)
