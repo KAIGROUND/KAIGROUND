@@ -3,7 +3,7 @@
     <div class="wrapper">
 
       <v-container class="grey lighten-5">
-        <Minigame v-if="minigame_mode" :prices="prices" @minidone="mini_done"/>
+        <Minigame v-if="minigame_mode" :prices="prices" :mode="mode" @minidone="mini_done"/>
         <v-row no-gutters dense v-if="!minigame_mode">
           <v-col cols="5">
             <Map/>
@@ -95,13 +95,12 @@ export default {
     const status = this.$firebase.database().ref('status')
     status.child('mode').on("value", snapshot=>{
       this.mode = snapshot.val()
+      this.minigame_mode = false
       if(snapshot.val() !== 2){
         this.get_time_idx(val => {
           this.run_timer(val)
           this.onChangeMode()
         });
-      } else {
-        this.minigame_mode = false;
       }
     })
 
@@ -169,10 +168,10 @@ export default {
     },
 
     launch_minigame(){
-      if(!this.minigame_mode){
+      if(!this.minigame_mode && this.mode === 1){
         this.$http.get(`${this.$host}minigame?me=${this.$store.state.class}`).then(result =>{
-          this.prices = JSON.parse(result.data.data)
-          this.minigame_mode = true
+            this.prices = JSON.parse(result.data.data)
+            this.minigame_mode = true
         })
       } else this.minigame_mode = false
     },
