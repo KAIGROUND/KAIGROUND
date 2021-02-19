@@ -139,18 +139,17 @@
                 defense_team: 0,
                 defense_item: 0,
                 attack_item: 0,
-                minigame_checker: 0,
                 id_to_item:['','개강','퀴즈','무거운 전공책','아침 수업','기숙사 호실이동','연습반','과제','실험 수업','계절 학기','중간고사','기말고사','예습복습','낮잠','야식','튜터링','족보','공강','딸기 파티','축제','라이프','수강 철회','카이 야잠','카이 돕바','청바지','카고바지','체크남방','카이 후드티'],
             })
         },
         props: ['mode', 'turn', 'inventory_attack', 'inventory_defense', 'team_list'],
         methods:{
             run_attack(){
-                const frm = new FormData()
-                frm.append('me', this.$store.state.class)
-                frm.append('classroom', this.attack_classroom)
-                frm.append('item', this.id_to_item.indexOf(this.attack_item))
-                this.$http.post(`${this.$host}attack`, frm).then(result => {
+                this.$http.post(`${this.$host}attack`, {
+                    "me": this.$store.state.class,
+                    "classroom": this.attack_classroom,
+                    "item": this.id_to_item.indexOf(this.attack_item)
+                }).then(result => {
                     if(result.data.result !== 0){
                         this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
                         this.snackbar = true
@@ -158,17 +157,16 @@
                         this.snackbar_text = '공격을 완료했습니다. 점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
                         this.snackbar = true
                         this.attack_disable = true
-                        this.minigame_checker++;
-                        this.$emit('ainv', result.data.attack_list)
+                        this.$emit('ainv', JSON.parse(result.data.attack_list))
                     }
                 })
             },
             run_move(){
-                const frm = new FormData()
-                frm.append('me', this.$store.state.class)
-                frm.append('area', this.move_pos)
-                frm.append('initial',this.turn === 1 ? 0 : 1 )
-                this.$http.post(`${this.$host}move`, frm).then(result => {
+                this.$http.post(`${this.$host}move`, {
+                    "me": this.$store.state.class,
+                    "area": this.move_pos,
+                    "initial": this.turn === 1 ? 0 : 1
+                }).then(result => {
                     if(result.data.result !== 0){
                         this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
                         this.snackbar = true
@@ -180,20 +178,18 @@
                 })
             },
             run_defense(){
-                const frm = new FormData()
-                frm.append('me', this.$store.state.class)
-                frm.append('classroom', this.defense_team)
-                frm.append('item', this.id_to_item.indexOf(this.defense_item))
-                this.$http.post(`${this.$host}defense`, frm).then(result => {
+                this.$http.post(`${this.$host}defense`, {
+                    "me": this.$store.state.class,
+                    "classroom": this.defense_team,
+                    "item": this.id_to_item.indexOf(this.defense_item)
+                }).then(result => {
                     if(result.data.result !== 0){
                         this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
                         this.snackbar = true
                     } else {
-                        this.snackbar_text = '방어를 완료했습니다. 점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
+                        this.snackbar_text = this.defense_team + '에 대한 방어를 완료했습니다. 점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
                         this.snackbar = true
-                        this.defense_disable = true
-                        this.minigame_checker++;
-                        this.$emit('dinv', result.data.defense_list)
+                        this.$emit('dinv', JSON.parse(result.data.defense_list))
                     }
                 })
             },
@@ -207,7 +203,6 @@
                     this.defense_disable = true
                 }
                 else if(val === 1){
-                    this.minigame_checker = 0
                     this.move_disable = true
                     this.attack_disable = false
                     this.defense_disable = false
@@ -217,9 +212,6 @@
                     this.defense_disable = true
                 }
             },
-            minigame_checker(){
-                if(this.minigame_checker === 2)this.$emit('minigame')
-            }
         }
     }
 </script>

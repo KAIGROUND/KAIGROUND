@@ -12,7 +12,7 @@ const firebaseConfig=require("../credentials/firebase")
 firebase.initializeApp(firebaseConfig)
 Vue.prototype.$firebase = firebase
 Vue.prototype.$http = axios
-Vue.prototype.$host = "http://localhost:5000/"
+Vue.prototype.$host = "http://localhost:5555/"
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
