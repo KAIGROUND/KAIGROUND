@@ -330,7 +330,7 @@ def set_interval(func, sec):
     return t
 
 def every_second():
-    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended
+    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended, end_of_game
     #mode 0 : move, 1: bg, 2: wait
     #2분 시작할 때
     if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
