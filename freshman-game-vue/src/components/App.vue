@@ -20,7 +20,7 @@
         </v-row>
         <v-row no-gutters dense>
           <v-col cols="5">
-            <Status :mode="mode" :turn="turn" :inventory_attack="inventory_attack" :inventory_defense="inventory_defense" :team_list="team_list" @minigame="launch_minigame" @ainv="update_ainv" @dinv="update_dinv"/>
+            <Status :mode="mode" :turn="turn" :inventory_attack="inventory_attack" :inventory_defense="inventory_defense" :team_list="team_list" @ainv="update_ainv" @dinv="update_dinv"/>
           </v-col>
           <v-col cols="3">
             <Turn :timer="timer" :mode="mode"/>
@@ -97,9 +97,8 @@ export default {
       this.mode = snapshot.val()
       if(snapshot.val() !== 2){
         this.get_time_idx(val => {
-          this.time_idx = val
-          this.run_timer()
-          this.onChangeMode(val)
+          this.run_timer(val)
+          this.onChangeMode()
         });
       } else {
         this.minigame_mode = false;
@@ -119,18 +118,32 @@ export default {
       })
     },
 
-    run_timer() {
+    run_timer(val) {
       const T=[120,5,300,5]
+      let timer = 0
       if(this.mode === 0){
-        this.timer = T[0] - this.time_idx % (T[0] + T[1] + T[2] + T[3])
+        timer = T[0] - val % (T[0] + T[1] + T[2] + T[3])
       } else if(this.mode === 1){
-        this.timer = T[2] - (this.time_idx - (T[0] + T[1])) % (T[0] + T[1] + T[2] + T[3])
+        timer = T[2] - (val - (T[0] + T[1])) % (T[0] + T[1] + T[2] + T[3])
+      }
+
+      if(timer < 0){
+        setTimeout(() => {
+          this.get_time_idx(new_val => {
+            this.run_timer(new_val)
+          });
+        }, 1000)
+        return;
+      } else {
+        this.timer = timer;
+        this.time_idx = val
       }
 
       if(this.timer > 3) { // 버그 방지
         let looper = setInterval(() => {
           this.timer--
           if (this.timer <= 0 || this.mode === 2) {
+
             clearInterval(looper)
             this.mode = 2
           }
@@ -141,25 +154,24 @@ export default {
       }
     },
 
-    onChangeMode(idx){
-      if(idx === 0){
-        this.$http.get(`${this.$host}inventory?me=${this.$store.state.class}`).then(result => {
-          this.inventory_attack = JSON.parse(result.data.attack_list)
-          this.inventory_defense = JSON.parse(result.data.defense_list)
-          this.armor_top = result.data.top
-          this.armor_bottom = result.data.bottom
-        })
-      } else if(idx === 1){
-        this.$http.get(`${this.$host}get_attack?me=${this.$store.state.class}`).then(result => {
-          this.team_list= JSON.parse(result.data.team_list)
-        })
-      }
+    onChangeMode(){
+      this.$http.get(`${this.$host}inventory?me=${this.$store.state.class}`).then(result => {
+        this.inventory_attack = JSON.parse(result.data.attack_list)
+        this.inventory_defense = JSON.parse(result.data.defense_list)
+        this.armor_top = result.data.top
+        this.armor_bottom = result.data.bottom
+      })
+      this.$http.get(`${this.$host}get_attack?me=${this.$store.state.class}`).then(result => {
+        console.log(result.data.team_list)
+        this.team_list= JSON.parse(result.data.team_list)
+      })
+
     },
 
     launch_minigame(){
       if(!this.minigame_mode){
         this.$http.get(`${this.$host}minigame?me=${this.$store.state.class}`).then(result =>{
-          this.prices = result.data
+          this.prices = JSON.parse(result.data.data)
           this.minigame_mode = true
         })
       } else this.minigame_mode = false

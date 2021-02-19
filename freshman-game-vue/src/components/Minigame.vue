@@ -132,10 +132,10 @@
             },
             start(){
                 this.dialog_c=false
-                const frm = new FormData()
-                frm.append('me', this.$store.state.class)
-                frm.append('select', this.idx)
-                this.$http.post(`${this.$host}miniselect`, frm).then(result => {
+                this.$http.post(`${this.$host}miniselect`, {
+                    "me": this.$store.state.class,
+                    "select": this.idx
+                }).then(result => {
                     if (result.data.result === 0) {
                         this.msg = result.data.msg
                         this.dialog = true
@@ -154,11 +154,11 @@
             },
             miniresult(res){
                 this.dialog1=false
-                const frm = new FormData()
-                frm.append('me', this.$store.state.class)
-                frm.append('select', this.idx)
-                frm.append('result', res)
-                this.$http.post(`${this.$host}minisuccess`, frm).then(result => {
+                this.$http.post(`${this.$host}minisuccess`, {
+                    "me": this.$store.state.class,
+                    "select": this.idx,
+                    "success": res
+                }).then(result => {
                     if (result.data.result === 0) {
                         this.$emit('minidone')
                     } else {
