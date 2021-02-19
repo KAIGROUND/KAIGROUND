@@ -9,7 +9,7 @@ import sys, time, firebase_admin, random
 
 app = Flask(__name__)
 CORS(app)
-cred = credentials.Certificate("C:\Programming\kaistground-firebase-adminsdk-gmdug-6d30cf4f0d.json")
+cred = credentials.Certificate("./kaistground-firebase-adminsdk-gmdug-6d30cf4f0d.json")
 admin = firebase_admin.initialize_app(cred, {'databaseURL':'https://kaistground-default-rtdb.firebaseio.com'})
 game_thread = None
 status = db.reference('status')
@@ -238,6 +238,7 @@ def res_inventory():
         if item_to_id[i] not in dic_attk.keys():
             dic_attk[item_to_id[i]]=1
         else: dic_attk[item_to_id[i]]+=1
+    dic_attk[1]='∞'
     return jsonify({'attack_list':dumps(dic_attk),'defense_list':dumps(dic_def),'top':item_to_id[Team_list[team_id].up_armor],'bottom':item_to_id[Team_list[team_id].down_armor]})
 
 @app.route("/get_attack", methods=['GET'])

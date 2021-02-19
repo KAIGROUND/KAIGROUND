@@ -9,15 +9,15 @@ import sys, time, firebase_admin, random
 
 app = Flask(__name__)
 CORS(app)
-cred = credentials.Certificate("C:\Programming\KAIGROUND\BACKEND\kaistground-firebase-adminsdk-gmdug-6d30cf4f0d.json")
+cred = credentials.Certificate("./kaistground-firebase-adminsdk-gmdug-6d30cf4f0d.json")
 admin = firebase_admin.initialize_app(cred, {'databaseURL':'https://kaistground-default-rtdb.firebaseio.com'})
 game_thread = None
 status = db.reference('status')
 stop_sig = False
 
 time_idx=None
-T=[20,5,30,5]
-n_team = 4
+T=[120,5,300,5]
+n_team = 26
 n_node = 42
 
 attack_dictionary = {'개강':{'attack':1, 'range':10}, '퀴즈':{'attack':2, 'range':6}, '무거운 전공책':{'attack':2, 'range':2}, '아침 수업':{'attack':2, 'range':4}, '연습반':{'attack':4, 'range':2}, '기숙사 호실 이동':{'attack':4, 'range':1}, '과제':{'attack':4, 'range':3}, '계절 학기':{'attack':4, 'range':3}, '중간고사':{'attack':6, 'range':2}, '기말고사':{'attack':8, 'range':4}, '실험 수업':{'attack':4, 'range':3}}
@@ -28,10 +28,11 @@ down_armor_dictionary = {'청바지':1, '카고바지':1, '':0} #24, 25
 id_to_item=['','개강','퀴즈','무거운 전공책','아침 수업','기숙사 호실 이동','연습반','과제','실험 수업','계절 학기','중간고사','기말고사','예습복습','낮잠','야식','튜터링','족보','공강','딸기 파티','축제','라이프','수강 철회','카이 야잠','카이 돕바','청바지','카고바지','체크남방','카이 후드티']
 item_to_id={'': 0, '개강': 1, '퀴즈': 2, '무거운 전공책': 3, '아침 수업': 4, '기숙사 호실 이동': 5, '연습반': 6, '과제': 7, '실험 수업': 8, '계절 학기': 9, '중간고사': 10, '기말고사': 11, '예습복습': 12, '낮잠': 13, '야식': 14, '튜터링': 15, '족보': 16, '공강': 17, '딸기 파티': 18, '축제': 19, '라이 프': 20, '수강 철회': 21, '카이 야잠': 22, '카이 돕바': 23, '청바지': 24, '카고바지': 25, '체크남방': 26, '카이 후드티': 27}
 item_set_left=[[], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4]]
-minigame_ppt_idx=[[],[]]
+minigame_ppt_idx=[[], [[129, 2], [400, 17], [94, 1]], [[8, 2], [20, 5], [177, 3]], [[177, 13], [137, 1], [529, 8]], [[99, 2], [8, 1], [400, 20]], [[177, 14], [99, 1], [539, 5]], [[20, 3], [20, 2], [531, 2]], [[137, 2], [94, 3], [177, 2]], [[177, 8], [177, 5], [529, 9]], [[539, 3], [177, 10], [383, 1]], [[177, 6], [400, 7], [8, 4]], [[531, 4], [129, 1], [41, 1]], [[99, 3], [177, 5], [529, 10]], [[30, 4], [531, 3], [177, 9]], [[400, 10], [30, 7], [485, 2]], [[151, 2], [400, 11], [151, 1]], [[20, 4], [177, 19], [400, 2]], [[451, 1], [529, 4], [137, 4]], [[451, 2], [529, 7], [8, 9]], [[169, 1], [529, 3], [20, 1]], [[30, 3], [30, 1], [531, 5]], [[83, 2], [8, 6], [94, 5]], [[400, 16], [464, 1], [400, 18]], [[83, 1], [20, 7], [539, 9]], [[400, 15], [539, 4], [20, 6]], [[539, 7], [529, 6], [177, 7]], [[8, 3], [531, 1], [539, 1]], [[529, 2], [177, 11], [539, 2]], [[400, 12], [400, 4], [425, 2]], [[529, 5], [177, 20], [400, 9]], [[400, 14], [94, 4], [8, 10]], [[177, 12], [539, 10], [400, 1]], [[177, 8], [30, 5], [30, 2]], [[30, 6], [177, 16], [177, 18]], [[539, 8], [30, 8], [83, 3]], [[177, 15], [539, 6], [468, 1]], [[400, 6], [20, 8], [425, 1]], [[8, 5], [529, 1], [508, 1]], [[94, 6], [400, 13], [94, 2]], [[8, 7], [137, 3], [485, 1]], [[177, 1], [30, 9], [177, 4]], [[177, 17], [41, 2], [400, 3]], [[99, 4], [400, 19], [8, 8]]]
 item_set_av=[]
 moved = [0 for i in range(n_team+1)]
 attacked = [0 for i in range(n_team+1)]
+defended = dict()
 check_update_point=1
 
 class Node:
@@ -147,7 +148,11 @@ def page_not_found(error):
 def res_move(): 
     global attack_list, last_attack_list, Team_list, mp, moved
     data = request.get_json()
+    if not data['area'].isdigit():
+        return jsonify({'result':1,'err_msg':'이동할 구역은 숫자이여야 합니다.'})
     team_id=int(data['me']);area=int(data['area']);init=int(data['initial'])
+    if not (1<=area<=n_node):
+        return jsonify({'result':1,'err_msg':'이동할 구역은 1~42 사이의 숫자이여야 합니다.'})
     if moved[team_id]:
         return jsonify({'result':1,'err_msg':'한 턴에는 한번만 이동할 수 있습니다.'})
     moved[team_id]=1
@@ -167,7 +172,11 @@ def res_move():
 def res_attack():
     global attack_list, last_attack_list, Team_list, mp, attacked
     data = request.get_json()
+    if not data['classroom'].isdigit():
+        return jsonify({'result':1,'err_msg':'공격할 반은 숫자이여야 합니다.'})
     team_id=int(data['me']);team_to_attack=int(data['classroom']);item_id=int(data['item'])
+    if not (1<=team_to_attack<=n_team):
+        return jsonify({'result':1,'err_msg':'공격할 반은 1~26 사이의 숫자이여야 합니다.'})
     if attacked[team_id]:
         return jsonify({'result':1,'err_msg':'한 턴에 두번 공격할 수 없습니다.'})
     attacked[team_id]=1
@@ -175,6 +184,8 @@ def res_attack():
     if attack_item not in Team_list[team_id].attack_itemlist:
         return jsonify({'result':1,'err_msg':'인벤토리에 해당 아이템이 없습니다.'})
     av_attk=Team_list[team_id].attackable_teams(attack_item)
+    if team_to_attack==team_id:
+        return jsonify({'result':1,'err_msg':'자신의 팀을 공격할 수 없습니다.'})
     if team_to_attack not in av_attk:
         return jsonify({'result':1,'err_msg':'해당 팀을 공격하기에는 너무 멀리 있습니다.'})
     attack(Team_list[team_id],Team_list[team_to_attack],attack_item)
@@ -189,9 +200,12 @@ def res_attack():
     
 @app.route("/defense", methods=['POST'])
 def res_defense():
-    global attack_list, last_attack_list, Team_list, mp
+    global attack_list, last_attack_list, Team_list, mp, defended
     data = request.get_json()
     team_id=int(data['me']);team_to_defend=int(data['classroom']);item_id=int(data['item'])
+    if (team_id,team_to_defend) in defended.keys():
+        return jsonify({'result':1,'err_msg':'해당 공격에 대해서는 이미 방어 아이템을 사용 했습니다.'})
+    defended[(team_id,team_to_defend)]=1
     def_item=id_to_item[item_id]
     if def_item not in Team_list[team_id].def_itemlist:
         return jsonify({'result':1,'err_msg':'인벤토리에 해당 아이템이 없습니다.'})
@@ -259,7 +273,7 @@ def res_miniselect():
     if item_set_av[team_id][sec][sel]:
         return jsonify({'result':2,'err_msg':'해당 아이템 세트는 이미 도전한 아이템 세트 입니다.'})
     item_set_left[sec][sel]-=1;item_set_av[team_id][sec][sel]=1
-    return jsonify({'result':0,'page_num':minigame_ppt_idx[sec][sel]}) #minigame_ppt_idx[sec][sel]
+    return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임의 %d번째 게임을 해주세요!'%(minigame_ppt_idx[sec][sel][0],minigame_ppt_idx[sec][sel][1])}) #minigame_ppt_idx[sec][sel]
 
 @app.route("/minisuccess", methods=['POST'])
 def res_minisuccess ():
@@ -304,7 +318,7 @@ def set_interval(func, sec):
     return t
 
 def every_second():
-    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point
+    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended
     #mode 0 : move, 1: bg, 2: wait
     #2분 시작할 때
     if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
@@ -345,7 +359,7 @@ def every_second():
         last_attack_list=attack_list
         attack_list=[[] for i in range(n_team+1)]
         attacked = [0 for i in range(n_team+1)]
-
+        defended=dict()
     time_idx += 1
     set_value("status", "time_idx", time_idx)
 
@@ -391,4 +405,4 @@ if __name__=="__main__":
             item_set_av[i].append([])
             for k in range(3):
                 item_set_av[i][j].append(0)
-    app.run(host="172.30.1.25", port=5555, debug=0) #172.30.1.25
+    app.run(host="127.0.0.1", port=5555, debug=0)
