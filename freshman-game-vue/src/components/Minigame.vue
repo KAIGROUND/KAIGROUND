@@ -38,7 +38,7 @@
         >
             <v-card>
                 <div class="game-progressing">{{idx + 1}}번째 아이템을 얻기 위한 미니게임이 진행 중입니다.</div>
-                <div class="game-progressing-sub">슬라이드 {{page}}페이지 입니다.</div>
+                <div class="game-progressing-sub">{{msg}}</div>
             </v-card>
         </v-dialog>
 
@@ -57,14 +57,14 @@
                     <v-btn
                             color="red darken-1"
                             text
-                            @click="dialog1 = false"
+                            @click="miniresult(1)"
                     >
                         실패
                     </v-btn>
                     <v-btn
                             color="green darken-1"
                             text
-                            @click="dialog1 = false"
+                            @click="miniresult(0)"
                     >
                         성공
                     </v-btn>
@@ -77,28 +77,54 @@
                 <span>Minigame</span>
             </div>
             <v-row justify="space-around" class="pa-8">
-                <div>
-                    <v-img width="300px" height="300px" src="../assets/logo.png" @click="confirm(0)"></v-img>
-                    <div class="text-wrapper"><span class="count">7</span>개 남음</div>
+                <div @click="confirm(0)">
+                    <div>
+                        <InventoryDesc :id="prices[0].item1" narrow="true" style="display: inline-block; vertical-align: top"></InventoryDesc>
+                        <InventoryDesc :id="prices[0].item2" narrow="true" style="display: inline-block; vertical-align: top"></InventoryDesc>
+                    </div>
+                    <div class="text-wrapper"><span class="count">{{prices[0].cnt}}</span>개 남음</div>
                 </div>
-
-                <div>
-                    <v-img width="300px" height="300px" src="../assets/logo.png" @click="confirm(1)"></v-img>
-                    <div class="text-wrapper"><span class="count">7</span>개 남음</div>
+                <div @click="confirm(1)">
+                    <div>
+                        <InventoryDesc :id="prices[1].item1" narrow="true" style="display: inline-block; vertical-align: top"></InventoryDesc>
+                        <InventoryDesc :id="prices[1].item2" narrow="true" style="display: inline-block; vertical-align: top"></InventoryDesc>
+                    </div>
+                    <div class="text-wrapper"><span class="count">{{prices[1].cnt}}</span>개 남음</div>
                 </div>
-                <div>
-                    <v-img width="300px" height="300px" src="../assets/logo.png" @click="confirm(2)"></v-img>
-                    <div class="text-wrapper"><span class="count">7</span>개 남음</div>
+                <div @click="confirm(2)">
+                    <div>
+                        <InventoryDesc :id="prices[2].item1" narrow="true" style="display: inline-block; vertical-align: top"></InventoryDesc>
+                        <InventoryDesc :id="prices[2].item2" narrow="true" style="display: inline-block; vertical-align: top"></InventoryDesc>
+                    </div>
+                    <div class="text-wrapper"><span class="count">{{prices[2].cnt}}</span>개 남음</div>
                 </div>
             </v-row>
         </v-card>
+
+        <v-snackbar v-model="snackbar">
+            {{ snackbar_text }}
+
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                        color="pink"
+                        text
+                        v-bind="attrs"
+                        @click="snackbar = false"
+                >
+                    Close
+                </v-btn>
+            </template>
+        </v-snackbar>
 
     </v-container>
 </template>
 
 <script>
+    import InventoryDesc from "./InventoryDesc";
     export default {
         name: "Minigame",
+        components: {InventoryDesc},
+        props: ["prices"],
         methods: {
             confirm(idx){
                 this.idx=idx
@@ -106,13 +132,40 @@
             },
             start(){
                 this.dialog_c=false
-                this.dialog=true
-                this.page=123
-                setTimeout(() => {
-                    this.dialog=false
-                    this.dialog1=true
-
-                }, 5000)
+                const frm = new FormData()
+                frm.append('me', this.$store.state.class)
+                frm.append('select', this.idx)
+                this.$http.post(`${this.$host}miniselect`, frm).then(result => {
+                    if (result.data.result === 0) {
+                        this.msg = result.data.msg
+                        this.dialog = true
+                        setTimeout(() => {
+                            this.dialog = false
+                            this.dialog1 = true
+                        }, 10000)
+                    } else if (result.data.result === 1) {
+                        this.snackbar_text = '다른 팀에서 먼저 선택해 현재 수량이 0입니다. 다른 세트를 선택해 주세요.'
+                        this.snackbar = true
+                    } else {
+                        this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
+                        this.snackbar = true
+                    }
+                })
+            },
+            miniresult(res){
+                this.dialog1=false
+                const frm = new FormData()
+                frm.append('me', this.$store.state.class)
+                frm.append('select', this.idx)
+                frm.append('result', res)
+                this.$http.post(`${this.$host}minisuccess`, frm).then(result => {
+                    if (result.data.result === 0) {
+                        this.$emit('minidone')
+                    } else {
+                        this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
+                        this.snackbar = true
+                    }
+                })
             }
         },
         data(){
@@ -120,9 +173,10 @@
                 dialog: false,
                 dialog1: false,
                 dialog_c: false,
-                page: -1,
                 idx: -1,
-                img_src: 'https://i.pinimg.com/originals/0a/4d/cb/0a4dcb92fa2d3c601b58d72720d6bec4.jpg'
+                snackbar: false,
+                snackbar_text: '',
+                msg: '',
             })
         }
     }

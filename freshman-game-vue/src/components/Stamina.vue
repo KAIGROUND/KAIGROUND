@@ -11,10 +11,10 @@
                 <td style="width:10%; padding: 0 0 0 12px">{{ item }}</td>
                 <td style="width:40%">
                     <v-progress-linear
-                            :color="getCol((item-1)*5)"
-                            :value="(item-1)*5"
+                            :color="getCol(st(item))"
+                            :value="st(item)"
                             style="height: 12px"
-                            :buffer-value="(item-1)*5 === 0 ? 0 : 100"
+                            :buffer-value="st(item) === 0 ? 0 : 100"
                             stream
                             rounded
                     />
@@ -22,10 +22,10 @@
                 <td style="width:10%; padding: 0 0 0 12px">{{ item+13 }}</td>
                 <td style="width:40%">
                     <v-progress-linear
-                            :color="getCol(item*2+45)"
-                            :value="item*2+45"
+                            :color="getCol(st(item+13))"
+                            :value="st(item+13)"
                             style="height: 12px"
-                            :buffer-value="(item*2+45)*5 === 0 ? 0 : 100"
+                            :buffer-value="st(item+13) === 0 ? 0 : 100"
                             stream
                             rounded
                     />
@@ -39,14 +39,30 @@
 <script>
     export default {
         name: "Stamina",
+        data(){
+            return ({
+                stamina_list: []
+            })
+        },
         methods: {
-            getCol: val => {
+            getCol(val){
                 if(val > 66) return 'green';
                 else if(val > 33) return 'orange';
                 else if(val === 0) return 'blue';
                 else return 'red darken-2'
+            },
+            st(idx){
+                return this.stamina_list[idx]?this.stamina_list[idx]:0;
             }
-        }
+        },
+        mounted() {
+            const stamina = this.$firebase.database().ref('stamina')
+            stamina.on("value", snapshot => {
+                for(let i in snapshot.val()){
+                    this.$set(this.stamina_list, i, snapshot.val()[i]*10)
+                }
+            })
+        },
     }
 </script>
 

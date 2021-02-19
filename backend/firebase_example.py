@@ -109,7 +109,32 @@ def test():
 @app.route('/move', methods=["POST"])
 def move():
     print(request.form.to_dict())
-    return '{"result":0, "area":23}'
+    return '{"result":0}'
+
+@app.route('/attack', methods=["POST"])
+def attack():
+    print(request.form.to_dict())
+    return '{"result":0, "attack_list": {"1":2, "2": 3}}'
+
+@app.route('/defense', methods=["POST"])
+def defense():
+    print(request.form.to_dict())
+    return '{"result":0, "defense_list": {"11":2, "12": 3}}'
+
+@app.route('/minigame')
+def minigame():
+    print(request.args.to_dict())
+    return '{"0":{"item1":2,"item2":3,"cnt":5},"1":{"item1":5,"item2":3,"cnt":5},"2":{"item1":2,"item2":8,"cnt":4}}'
+
+@app.route('/miniselect', methods=["POST"])
+def miniselect():
+    print(request.form.to_dict())
+    return '{"result":0, "msg":"1341123421234"}'
+
+@app.route('/minisuccess', methods=["POST"])
+def minisuccess():
+    print(request.form.to_dict())
+    return '{"result":0}'
 
 if __name__ == "__main__":
     app.run()

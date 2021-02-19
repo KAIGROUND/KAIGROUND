@@ -16,25 +16,25 @@
                 </v-col>
             </v-row>
             <v-divider/>
-            <div v-for="i in Math.max(this.attack_item.length, this.defense_item.length)" v-bind:key="i">
+            <div v-for="i in Math.max(Object.keys(inventory_attack).length, Object.keys(inventory_defense).length)" v-bind:key="i">
                 <v-row no-gutters class="ma-0" :class="i%2?'bg-grey':''">
-                    <v-col cols="5" class="count" v-ripple style="text-align: left">
-                        <InventoryItem v-if="attack_item[i-1]" :src="attack_item[i-1].src" :name="attack_item[i-1].name"></InventoryItem>
+                    <v-col cols="5" class="count" v-ripple style="text-align: left" @click="showDesc(Object.keys(inventory_attack)[i-1])">
+                        <InventoryItem v-if="Object.keys(inventory_attack)[i-1]" :src="get_src(Object.keys(inventory_attack)[i-1])" :name="id_to_item[Object.keys(inventory_attack)[i-1]]"></InventoryItem>
                     </v-col>
                     <v-divider vertical/>
                     <v-col cols="1" class="count">
                          <div class="count-num">
-                            {{(attack_item[i-1]) ? attack_item[i-1].count : ''}}
+                            {{(Object.keys(inventory_attack)[i-1]) ? Object.values(inventory_attack)[i-1] : ''}}
                          </div>
                     </v-col>
                     <v-divider vertical/>
-                    <v-col cols="5" class="count" v-ripple style="text-align: left">
-                        <InventoryItem v-if="defense_item[i-1]" :src="defense_item[i-1].src" :name="defense_item[i-1].name"></InventoryItem>
+                    <v-col cols="5" class="count" v-ripple style="text-align: left" @click="showDesc(Object.keys(inventory_defense)[i-1])">
+                        <InventoryItem v-if="Object.keys(inventory_defense)[i-1]" :src="get_src(Object.keys(inventory_defense)[i-1])" :name="id_to_item[Object.keys(inventory_defense)[i-1]]"></InventoryItem>
                     </v-col>
                     <v-divider vertical/>
                     <v-col cols="1" class="count">
                         <div class="count-num">
-                            {{(defense_item[i-1]) ? defense_item[i-1].count : ''}}
+                            {{(Object.keys(inventory_defense)[i-1]) ? Object.values(inventory_defense)[i-1] : ''}}
                         </div>
                     </v-col>
                 </v-row>
@@ -42,42 +42,47 @@
             </div>
         </v-container>
 
+        <v-dialog
+                v-model="dialog_a"
+                max-width="460"
+        >
+            <InventoryDesc :id="dialog_id" :count="dialog_count"></InventoryDesc>
+        </v-dialog>
+
     </v-card>
 
 </template>
 
 <script>
     import InventoryItem from "./InventoryItem";
+    import InventoryDesc from "./InventoryDesc";
     export default {
         name: "Inventory",
-        components: {InventoryItem},
+        components: {InventoryDesc, InventoryItem},
+        props: ["inventory_defense", "inventory_attack"],
         data(){
             return({
-                attack_item: [
-                    {name: "아이템1", count:1, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
-                    {name: "아이2", count:3, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
-                    {name: "템3", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템4", count:99, src:'https://img.icons8.com/ios/452/sword.png'},
-
-                ],
-                defense_item: [
-                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템아이템", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
-                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템아이템", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
-                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템아이템3", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
-                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템아이3", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
-                    {name: "아이템1", count:0, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아이템2", count:31, src:'https://img.icons8.com/ios/452/sword.png'},
-                    {name: "아아이3", count:0, src:'https://i.pinimg.com/originals/f8/4a/7d/f84a7d952cc7ac55b025f2ea28cbc2cc.jpg'},
-                ],
+                id_to_item:['','개강','퀴즈','무거운 전공책','아침 수업','기숙사 호실이','연습반','과제','실험 수업','계절 학기','중간고사','기말고사','예습복습','낮잠','야식','튜터링','족보','공강','딸기 파티','축제','라이프','수강 철회','카이 야잠','카이 돕바','청바지','카고바지','체크남방','카이 후드티'],
+                dialog_a: false,
+                dialog_id: 1,
+                dialog_count: 0
             })
+        },
+        methods:{
+            get_src(id){
+                try{
+                    return require(`../assets/item/${id}.png`)
+                } catch(e) {
+                    return 'https://img.icons8.com/ios/452/sword.png'
+                }
+            },
+            showDesc(id){
+                if(id !== undefined){
+                    this.dialog_a = true
+                    this.dialog_id = id
+                    this.dialog_count = id < 12 ? this.inventory_attack[id.toString()] : this.inventory_defense[id.toString()]
+                }
+            }
         },
     }
 </script>
@@ -94,7 +99,7 @@
         text-align: center;
         font-size: 1em;
         font-weight: bold;
-        margin: 4px -1px 4px 0;
+        margin: 4px -1.5px 4px 0;
     }
     .count{
         text-align: center;

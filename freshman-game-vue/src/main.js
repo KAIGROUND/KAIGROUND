@@ -7,11 +7,12 @@ import Main from "./components/Main";
 import firebase from "firebase";
 import { store } from "./store";
 import axios from 'axios'
-const firebaseConfig=require("../credentials/kaist-freshman-game-firebase-adminsdk-8xps2-5c0970a8f2")
+const firebaseConfig=require("../credentials/firebase")
 
 firebase.initializeApp(firebaseConfig)
 Vue.prototype.$firebase = firebase
 Vue.prototype.$http = axios
+Vue.prototype.$host = "http://localhost:5000/"
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)

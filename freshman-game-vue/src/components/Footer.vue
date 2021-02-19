@@ -68,17 +68,7 @@
 <script>
     export default {
         name: "Footer",
-        mounted() {
-            const status = this.$firebase.database().ref('status')
-            status.child('turn').on("value", snapshot=>{
-                this.turn = parseInt(snapshot.val())
-            })
-        },
-        data(){
-            return ({
-                turn: 0
-            })
-        },
+        props: ['turn'],
         methods:{
             cur_turn(idx){
                 if(idx < this.turn) return "text-center rm-ma green white--text"
