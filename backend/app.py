@@ -335,7 +335,7 @@ def every_second():
     #2분 시작할 때
     if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
         turn = (time_idx // (T[0] + T[1] + T[2] + T[3])) + 1
-        if turn > 16 and end_of_game:
+        if turn > 15 and end_of_game:
             end_of_game=0
             for i in range(n_team):
                 update_pt=[]
