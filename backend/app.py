@@ -334,6 +334,7 @@ def every_second():
             if Team_list[i+1].sleep:
                 Team_list[i+1].sleep=0
                 Team_list[i+1].hp=10+up_armor_dictionary[Team_list[i+1].up_armor]+down_armor_dictionary[Team_list[i+1].down_armor]
+                Team_list[i+1].up_armor='';Team_list[i+1].down_armor=''
                 Team_list[i+1].move_team(random.randint(1,n_node),init=1)
         update_database()
         moved = [0 for i in range(n_team+1)];check_update_point=1
@@ -397,8 +398,9 @@ def res_stop():
     return 'Stopped'
 
 @app.route('/')
-def admin_init():
+def admin_init(): 
     return "<h1>Go to init</h1>"
+
 if __name__=="__main__":
     for i in range(n_team+1):
         item_set_av.append([])
