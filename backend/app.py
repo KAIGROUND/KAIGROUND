@@ -391,6 +391,7 @@ def res_init():
         set_value("status", "time_idx", int(idx))
     else:
         set_value("status", "time_idx", 0)
+    update_database()
     game_thread = Thread(target=run_game)
     game_thread.start()
     return 'Start to run'
