@@ -1,7 +1,7 @@
 <template>
     <v-container class="container">
         <v-card class="card" color="indigo">
-            <span>{{$store.state.class + '반'}}</span>
+            <span>{{$store.state.class === "0" ? '새내기 여러분 환영합니다!' : $store.state.class + '반'}}</span>
             <v-btn color="pink" class="white--text" @click="logout">Logout</v-btn>
         </v-card>
     </v-container>

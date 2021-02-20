@@ -154,7 +154,7 @@
                         this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
                         this.snackbar = true
                     } else {
-                        this.snackbar_text = '공격을 완료했습니다. 점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
+                        this.snackbar_text = result.data.suc_msg +' 점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
                         this.snackbar = true
                         this.attack_disable = true
                         this.$emit('ainv', JSON.parse(result.data.attack_list))
@@ -187,7 +187,7 @@
                         this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
                         this.snackbar = true
                     } else {
-                        this.snackbar_text = this.defense_team + '에 대한 방어를 완료했습니다. 점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
+                        this.snackbar_text = result.data.suc_msg +' 점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
                         this.snackbar = true
                         this.$emit('dinv', JSON.parse(result.data.defense_list))
                     }

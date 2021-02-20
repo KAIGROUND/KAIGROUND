@@ -124,7 +124,7 @@
     export default {
         name: "Minigame",
         components: {InventoryDesc},
-        props: ["prices"],
+        props: ["prices", "mode"],
         methods: {
             confirm(idx){
                 this.idx=idx
@@ -139,7 +139,7 @@
                     if (result.data.result === 0) {
                         this.msg = result.data.msg
                         this.dialog = true
-                        setTimeout(() => {
+                        this.timeout = setTimeout(() => {
                             this.dialog = false
                             this.dialog1 = true
                         }, 10000)
@@ -173,11 +173,22 @@
                 dialog: false,
                 dialog1: false,
                 dialog_c: false,
-                idx: -1,
+                idx: 0,
                 snackbar: false,
                 snackbar_text: '',
                 msg: '',
+                timeout: null,
             })
+        },
+        watch:{
+            mode(){
+                if(this.mode !== 1){
+                    this.dialog_c=false
+                    this.dialog1=false
+                    this.dialog=false
+                    clearTimeout(this.timeout)
+                }
+            }
         }
     }
 </script>

@@ -8,10 +8,10 @@
         <v-simple-table>
             <tbody>
             <tr v-for="item in 13" :key="item.name" :bgcolor="item%2 ? '#EEEEEE': ''">
-                <td style="width:10%; padding: 0 0 0 12px">{{ item }}</td>
-                <td style="text-align: center; font-weight: bold">{{point_list[item] ? point_list[item] : 0}}</td>
-                <td style="width:10%; padding: 0 0 0 12px">{{ item + 13 }}</td>
-                <td style="text-align: center; font-weight: bold">{{point_list[item+13] ? point_list[item+13] : 0}}</td>
+                <td style="width:20%; padding: 0 0 0 12px;" :class="class_accent(item)">{{max_class(item)}}</td>
+                <td style="width:30%; text-align: center; font-weight: bold" :class="class_accent(item)">{{point_list[item] ? point_list[item] : 0}}</td>
+                <td style="width:20%; padding: 0 0 0 12px" :class="class_accent(item+13)">{{max_class(item + 13)}}</td>
+                <td style="width:30%; text-align: center; font-weight: bold;" :class="class_accent(item+13)">{{point_list[item+13] ? point_list[item+13] : 0}}</td>
             </tr>
             </tbody>
         </v-simple-table>
@@ -35,6 +35,14 @@
                 }
             })
         },
+        methods: {
+            class_accent(idx){
+                return this.$store.state.class === idx.toString() ? 'amber lighten-3' : ''
+            },
+            max_class(idx){
+                return idx;//(this.point_list.slice(0).sort(function(a,b){a<b})[0] === this.point_list[idx] && this.point_list[idx] !== 0) ? idx + '👑' : idx
+            }
+        }
     }
 </script>
 
