@@ -351,7 +351,12 @@ def every_second():
                 if Team_list[i+1].sleep:
                     Team_list[i+1].move_team(0,init=1)
             update_database()
+            global stop_sig
+            stop_sig = True
+            set_value("status", "mode", 2)
+            set_value("status", "turn", 0)  
             sys.exit()
+            
         set_value("status", "turn", turn)
         set_value("status", "mode", 0)
     #2분 끝나고 3초
