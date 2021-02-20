@@ -6,6 +6,7 @@ from typing import List
 from firebase_admin import credentials, db
 from threading import Thread, Timer
 import sys, time, firebase_admin, random
+from waitress import serve
 
 app = Flask(__name__)
 CORS(app)
@@ -356,7 +357,7 @@ def every_second():
             set_value("status", "mode", 2)
             set_value("status", "turn", 0)  
             sys.exit()
-            
+
         set_value("status", "turn", turn)
         set_value("status", "mode", 0)
     #2분 끝나고 3초
@@ -432,11 +433,12 @@ def res_stop():
 def admin_init(): 
     return "<h1>Go to init</h1>"
 
+for i in range(n_team+1):
+    item_set_av.append([])
+    for j in range(n_node+1):
+        item_set_av[i].append([])
+        for k in range(3):
+            item_set_av[i][j].append(0)
+
 if __name__=="__main__":
-    for i in range(n_team+1):
-        item_set_av.append([])
-        for j in range(n_node+1):
-            item_set_av[i].append([])
-            for k in range(3):
-                item_set_av[i][j].append(0)
-    app.run(host="127.0.0.1", port=5555, debug=0)
+    serve(app, host='0.0.0.0', port=5555)
