@@ -6,7 +6,7 @@
             </v-col>
             <v-divider vertical/>
             <v-col class="sub-text sub-head sub-small" cols="2">
-                TOP
+                Top
             </v-col>
             <v-col cols="3" @click="showDesc(top)">
                 <div class="im-text" >
@@ -16,7 +16,7 @@
                 </div>
             </v-col>
             <v-col class="sub-text sub-head sub-small" cols="2">
-                BOTTOM
+                Bottom
             </v-col>
             <v-col class="" cols="3" @click="showDesc(bottom)">
                 <div class="im-text">
