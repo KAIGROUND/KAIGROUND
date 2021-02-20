@@ -5,9 +5,8 @@ from json import dumps
 from typing import List 
 from firebase_admin import credentials, db
 from threading import Thread, Timer
-import sys, time, firebase_admin, random
+import sys, firebase_admin, random
 from waitress import serve
-import logging
 
 app = Flask(__name__)
 CORS(app)
@@ -15,13 +14,11 @@ cred = credentials.Certificate("./kaistground-firebase-adminsdk-gmdug-6d30cf4f0d
 admin = firebase_admin.initialize_app(cred, {'databaseURL':'https://kaistground-default-rtdb.firebaseio.com'})
 game_thread = None
 status = db.reference('status')
-logger = logging.getLogger('waitress')
-logger.setLevel(logging.INFO)
 
 stop_sig = False
 
 time_idx=None
-T=[120,5,300,5]
+T = db.reference('time_conf').get()
 n_team = 26
 n_node = 42
 
@@ -34,7 +31,8 @@ id_to_item=['','개강','퀴즈','무거운 전공책','아침 수업','기숙�
 item_to_id={'': 0, '개강': 1, '퀴즈': 2, '무거운 전공책': 3, '아침 수업': 4, '기숙사 호실 이동': 5, '연습반': 6, '과제': 7, '실험 수업': 8, '계절 학기': 9, '중간고사': 10, '기말고사': 11, '예습복습': 12, '낮잠': 13, '야식': 14, '튜터링': 15, '족보': 16, '공강': 17, '딸기 파티': 18, '축제': 19, '라이프': 20, '수강 철회': 21, '카이 야잠': 22, '카이 돕바': 23, '청바지': 24, '카고바지': 25, '체크남방': 26, '카이 후드티': 27}
 item_set_left=[[], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4]]
 minigame_ppt_idx=[[], [[129, 2], [400, 17], [94, 1]], [[8, 2], [20, 5], [177, 3]], [[177, 13], [137, 1], [529, 8]], [[99, 2], [8, 1], [400, 20]], [[177, 14], [99, 1], [539, 5]], [[20, 3], [20, 2], [531, 2]], [[137, 2], [94, 3], [177, 2]], [[177, 8], [177, 5], [529, 9]], [[539, 3], [177, 10], [383, 1]], [[177, 6], [400, 7], [8, 4]], [[531, 4], [129, 1], [41, 1]], [[99, 3], [177, 5], [529, 10]], [[30, 4], [531, 3], [177, 9]], [[400, 10], [30, 7], [485, 2]], [[151, 2], [400, 11], [151, 1]], [[20, 4], [177, 19], [400, 2]], [[451, 1], [529, 4], [137, 4]], [[451, 2], [529, 7], [8, 9]], [[169, 1], [529, 3], [20, 1]], [[30, 3], [30, 1], [531, 5]], [[83, 2], [8, 6], [94, 5]], [[400, 16], [464, 1], [400, 18]], [[83, 1], [20, 7], [539, 9]], [[400, 15], [539, 4], [20, 6]], [[539, 7], [529, 6], [177, 7]], [[8, 3], [531, 1], [539, 1]], [[529, 2], [177, 11], [539, 2]], [[400, 12], [400, 4], [425, 2]], [[529, 5], [177, 20], [400, 9]], [[400, 14], [94, 4], [8, 10]], [[177, 12], [539, 10], [400, 1]], [[177, 8], [30, 5], [30, 2]], [[30, 6], [177, 16], [177, 18]], [[539, 8], [30, 8], [83, 3]], [[177, 15], [539, 6], [468, 1]], [[400, 6], [20, 8], [425, 1]], [[8, 5], [529, 1], [508, 1]], [[94, 6], [400, 13], [94, 2]], [[8, 7], [137, 3], [485, 1]], [[177, 1], [30, 9], [177, 4]], [[177, 17], [41, 2], [400, 3]], [[99, 4], [400, 19], [8, 8]]]
-item_set_av=[]
+pass_list = ["5a6d935", "b0c8260", "d3454b3", "23afb7b", "5f2dd02", "0cfdee4", "bb33c82", "bd75bed", "8506f42", "2f2fdd7", "38d9924", "8c587a1", "1c90a1f", "5d573b6", "bcc3d15", "e2aede3", "c8598e5", "75311b4", "d35dad6", "dfcf865", "e3e14ed", "5c53d72", "20d48be", "2f3174b", "8f282ae", "ae7d478"]
+item_set_av=[];moved_most=[0 for i in range(n_team+1)]
 moved = [0 for i in range(n_team+1)]
 attacked = [0 for i in range(n_team+1)]
 defended = dict()
@@ -136,23 +134,34 @@ class Team:
         return rt
 
 Team_list = [Team(0,0,0,[],[],0)]+[Team(i+1,10,0,['개강'],[],0) for i in range(n_team)]
-attack_list=[[] for i in range(n_team+1)] #attack_list[a][b] 뜻 a 팀이 attack_list[a][b]한테 공격 받음
-last_attack_list=[[] for i in range(n_team+1)]
+last_attack_list=[[] for i in range(n_team+1)] #last_attack_list[a][b] 뜻 a 팀이 last_attack_list[a][b]한테 공격 받음
 
 def attack(a:Team, b:Team, attack_item:str): #a attack b with attack_item
     global attack_list, last_attack_list, Team_list, mp
     if attack_item not in a.attack_itemlist:
         return
-    attack_list[b.id].append([a.id,attack_dictionary[attack_item]['attack'],attack_item])
+    last_attack_list[b.id].append([a.id,attack_dictionary[attack_item]['attack'],attack_item])
 
 @app.errorhandler(404)
 def page_not_found(error):
     return "<h1>Wrong Access</h1>", 404
 
+@app.route("/login", methods=['POST'])
+def res_login():
+    global pass_list
+    data = request.get_json()
+    team_id=int(data['me']);ps=data['pw']
+    if pass_list[team_id-1]==ps:
+        return jsonify({'result':0,'suc_msg':'%d반 안녕하세요'%(team_id)})
+    else:
+        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
+    
 @app.route("/move", methods=['POST'])
 def res_move(): 
-    global attack_list, last_attack_list, Team_list, mp, moved
+    global last_attack_list, Team_list, mp, moved, pass_list
     data = request.get_json()
+    if data['pw'] not in pass_list:
+        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     if not data['area'].isdigit():
         return jsonify({'result':1,'err_msg':'이동할 구역은 숫자이여야 합니다.'})
     team_id=int(data['me']);area=int(data['area']);init=int(data['initial'])
@@ -177,8 +186,10 @@ def res_move():
 
 @app.route("/attack", methods=['POST'])
 def res_attack():
-    global attack_list, last_attack_list, Team_list, mp, attacked
+    global last_attack_list, Team_list, mp, attacked, pass_list
     data = request.get_json()
+    if data['pw'] not in pass_list:
+        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     if not data['classroom'].isdigit():
         return jsonify({'result':1,'err_msg':'공격할 반은 숫자이여야 합니다.'})
     team_id=int(data['me']);team_to_attack=int(data['classroom']);item_id=int(data['item'])
@@ -210,8 +221,10 @@ def res_attack():
     
 @app.route("/defense", methods=['POST'])
 def res_defense():
-    global attack_list, last_attack_list, Team_list, mp, defended
+    global last_attack_list, Team_list, mp, defended, pass_list
     data = request.get_json()
+    if data['pw'] not in pass_list:
+        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     team_id=int(data['me']);team_to_defend=int(data['classroom']);item_id=int(data['item'])
     if (team_id,team_to_defend) in defended.keys() and defended[(team_id,team_to_defend)]:
         return jsonify({'result':1,'err_msg':'해당 공격에 대해서는 이미 방어 아이템을 사용 했습니다.'})
@@ -238,7 +251,9 @@ def res_defense():
 
 @app.route("/inventory", methods=['GET'])
 def res_inventory():
-    global attack_list, last_attack_list, Team_list, mp
+    global last_attack_list, Team_list, mp, pass_list
+    if request.args.get('pw') not in pass_list:
+        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     team_id:int = int(request.args.get('me'))
     dic_def=dict();dic_attk=dict()
     for i in Team_list[team_id].def_itemlist:
@@ -255,7 +270,9 @@ def res_inventory():
 
 @app.route("/get_attack", methods=['GET'])
 def res_get_attack():
-    global attack_list, last_attack_list, Team_list, mp
+    global last_attack_list, Team_list, mp, pass_list
+    if request.args.get('pw') not in pass_list:
+        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     team_id:int = int(request.args.get('me'))
     dic=dict()
     for i in last_attack_list[team_id]:
@@ -264,7 +281,9 @@ def res_get_attack():
 
 @app.route("/minigame", methods=['GET'])
 def res_minigame():
-    global attack_list, last_attack_list, Team_list, mp, item_set_left
+    global last_attack_list, Team_list, mp, item_set_left, pass_list
+    if request.args.get('pw') not in pass_list:
+        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     team_id:int=int(request.args.get('me'))
     sec=Team_list[team_id].pos
     dic=dict()
@@ -278,8 +297,10 @@ def res_minigame():
 
 @app.route("/miniselect", methods=['POST'])
 def res_miniselect():
-    global attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, minigame_ppt_idx
+    global last_attack_list, Team_list, mp, item_set_left, item_set_av, minigame_ppt_idx,pass_list
     data = request.get_json()
+    if data['pw'] not in pass_list:
+        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     team_id=int(data['me']);sel=int(data['select']);sec=Team_list[team_id].pos
     if not (0<=sel<=2):
         return jsonify({'result':1,'err_msg':'select 숫자가 0~2가 아닙니다.'})
@@ -292,8 +313,10 @@ def res_miniselect():
 
 @app.route("/minisuccess", methods=['POST'])
 def res_minisuccess ():
-    global attack_list, last_attack_list, Team_list, mp, item_set_left
+    global last_attack_list, Team_list, mp, item_set_left, pass_list
     data = request.get_json()
+    if data['pw'] not in pass_list:
+        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     team_id=int(data['me']);sel=int(data['select']);suc=int(data['success'])
     if not (0<=sel<=2):
         return jsonify({'result':1,'err_msg':'select 숫자가 0~2가 아닙니다.'})
@@ -310,7 +333,7 @@ def set_value(ref, child, val):
     db.reference(ref).child(child).set(val)
 
 def update_database():
-    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av
+    global time_idx, last_attack_list, Team_list, mp, item_set_left, item_set_av
     dic=dict()
     for i in range(n_team):
         dic[i+1]=Team_list[i+1].pos
@@ -335,37 +358,22 @@ def set_interval(func, sec):
     return t
 
 def every_second():
-    global time_idx, attack_list, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended, end_of_game
-    #mode 0 : move, 1: bg, 2: wait
+    global time_idx, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended, end_of_game, stop_sig
+    #mode 0 : move, 1 : attack,game, 2 : def , 3 : wait
     #2분 시작할 때
-    if time_idx%(T[0] + T[1] + T[2] + T[3]) == 0:
-        turn = (time_idx // (T[0] + T[1] + T[2] + T[3])) + 1
-        if turn > 15 and end_of_game:
+    t_sum = T[0] + T[1] + T[2] + T[3] + T[4] + T[5]
+    if time_idx%t_sum == 0:
+        turn = (time_idx // t_sum) + 1
+        if turn > 11 and end_of_game:
             end_of_game=0
-            for i in range(n_team):
-                update_pt=[]
-                for j in last_attack_list[i+1]:
-                    if j[1]>0:
-                        Team_list[i+1].update_health(-j[1])
-                    update_pt.append([j[1],j[0]])
-                if Team_list[i+1].sleep:
-                    for j in update_pt: j[0]=10
-                for j in update_pt:
-                    if j[0]>0: Team_list[j[1]].update_point(j[0])
-            for i in range(n_team):
-                if Team_list[i+1].sleep:
-                    Team_list[i+1].move_team(0,init=1)
-            update_database()
-            global stop_sig
             stop_sig = True
-            set_value("status", "mode", 2)
-            set_value("status", "turn", 0)  
-            sys.exit()
+            set_value("status", "mode", 3)
+            set_value("status", "turn", 0)
 
         set_value("status", "turn", turn)
         set_value("status", "mode", 0)
     #2분 끝나고 3초
-    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + 3):
+    if time_idx%t_sum == (T[0] + 3):
         for i in range(n_team):
             if Team_list[i+1].sleep:
                 Team_list[i+1].sleep=0
@@ -373,12 +381,20 @@ def every_second():
                 Team_list[i+1].up_armor='';Team_list[i+1].down_armor=''
                 Team_list[i+1].move_team(random.randint(1,n_node),init=1)
         update_database()
-        moved = [0 for i in range(n_team+1)];check_update_point=1
-    #5분 시작할 때
-    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + T[1]):
+    #7분 시작할 때
+    if time_idx%t_sum == (T[0] + T[1]):
         set_value("status", "mode", 1)
-    #5분 끝나고 3초
-    if time_idx%(T[0] + T[1] + T[2] + T[3]) == (T[0] + T[1] + T[2] + 3) and check_update_point:
+    #7분 끝나고 3초
+    if time_idx%t_sum == (T[0] + T[1] + T[2] + 3):
+        attacked = [0 for i in range(n_team+1)]
+        moved = [0 for i in range(n_team+1)];check_update_point=1
+
+    #9분 시작할 때
+    if time_idx%t_sum == (T[0] + T[1] + T[2] + T[3]):
+        set_value("status", "mode", 2)
+
+    #9분 끝나고 3초
+    if time_idx%t_sum == (T[0] + T[1] + T[2] + T[3] + T[4] + 3) and check_update_point:
         check_update_point=0
         for i in range(n_team):
             update_pt=[]
@@ -387,34 +403,37 @@ def every_second():
                     Team_list[i+1].update_health(-j[1])
                 update_pt.append([j[1],j[0]])
             if Team_list[i+1].sleep:
-                for j in update_pt: j[0]=10
+                for j in update_pt: j[0]=5
             for j in update_pt:
                 if j[0]>0: Team_list[j[1]].update_point(j[0])
         for i in range(n_team):
             if Team_list[i+1].sleep:
                 Team_list[i+1].move_team(0,init=1)
         update_database()
-        last_attack_list=attack_list
-        attack_list=[[] for i in range(n_team+1)]
-        attacked = [0 for i in range(n_team+1)]
         defended=dict()
+        last_attack_list=[[] for i in range(n_team+1)]
+
     time_idx += 1
     set_value("status", "time_idx", time_idx)
 
 def run_game():
     global time_idx
     time_idx = status.child('time_idx').get()
-    set_value("status", "turn", time_idx // (T[0] + T[1] + T[2] + T[3]) + 1)
-    if time_idx % (T[0] + T[1] + T[2] + T[3]) < T[0]:
+    set_value("status", "turn", time_idx // (T[0] + T[1] + T[2] + T[3] + T[4] + T[5]) + 1)
+    if time_idx % (T[0] + T[1] + T[2] + T[3] + T[4] + T[5]) < T[0]:
         set_value("status", "mode", 0)
-    elif (T[0] + T[1]) < time_idx % (T[0] + T[1] + T[2] + T[3]) < (T[0] + T[1] + T[2]):
+    elif (T[0] + T[1]) < time_idx % (T[0] + T[1] + T[2] + T[3] + T[4] + T[5]) < (T[0] + T[1] + T[2]):
         set_value("status", "mode", 1)
+    elif (T[0] + T[1] + T[2] + T[3]) < time_idx % (T[0] + T[1] + T[2] + T[3]) < (T[0] + T[1] + T[2] + T[3] + T[4]):
+        set_value("status", "mode", 2)
     set_interval(every_second, 1)
 
-@app.route('/init')
+@app.route('/init', methods=['GET'])
 def res_init():
     global stop_sig
     stop_sig = False
+    if request.args.get('ps')!="3141592":
+        return 'Not admin'
     idx = request.args.get('time_idx')
     if idx is not None:
         set_value("status", "time_idx", int(idx))
@@ -427,15 +446,17 @@ def res_init():
 
 @app.route('/stop')
 def res_stop():
+    if request.args.get('ps')!="3141592":
+        return 'Not admin'
     global stop_sig
     stop_sig = True
-    set_value("status", "mode", 2)
+    set_value("status", "mode", 3)
     set_value("status", "turn", 0)
     return 'Stopped'
 
 @app.route('/')
-def admin_init(): 
-    return "<h1>Go to init</h1>"
+def mainpage():
+    return 'Go to init'
 
 for i in range(n_team+1):
     item_set_av.append([])
