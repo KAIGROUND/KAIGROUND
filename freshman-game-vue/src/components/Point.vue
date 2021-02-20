@@ -9,10 +9,9 @@
             <tbody>
             <tr v-for="item in 13" :key="item.name" :bgcolor="item%2 ? '#EEEEEE': ''">
                 <td style="width:20%; padding: 0 0 0 12px;" :class="class_accent(item)">{{max_class(item)}}</td>
-                <td style="text-align: center; font-weight: bold; padding-right: 10%" :class="class_accent(item)">{{point_list[item] ? point_list[item] : 0}}</td>
-                <td style="width: 1px; background: #000000; opacity: 12%; margin: 0; padding:0"></td>
+                <td style="width:30%; text-align: center; font-weight: bold" :class="class_accent(item)">{{point_list[item] ? point_list[item] : 0}}</td>
                 <td style="width:20%; padding: 0 0 0 12px" :class="class_accent(item+13)">{{max_class(item + 13)}}</td>
-                <td style="text-align: center; font-weight: bold; padding-right: 10%" :class="class_accent(item+13)">{{point_list[item+13] ? point_list[item+13] : 0}}</td>
+                <td style="width:30%; text-align: center; font-weight: bold;" :class="class_accent(item+13)">{{point_list[item+13] ? point_list[item+13] : 0}}</td>
             </tr>
             </tbody>
         </v-simple-table>

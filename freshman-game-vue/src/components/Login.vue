@@ -30,7 +30,8 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn color="primary" @click="submit">Login</v-btn>
+                                <v-btn color="pink" class="white--text" @click="freshman_submit">새내기로 로그인</v-btn>
+                                <v-btn color="primary" @click="submit">로그인</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
@@ -60,6 +61,10 @@
 
                 }
                 else alert("Login Failed!")
+            },
+            freshman_submit(){
+                this.$store.commit('currentUser', "0")
+                this.$router.push('/');
             }
         }
     }

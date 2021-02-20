@@ -19,10 +19,10 @@
           </v-col>
         </v-row>
         <v-row no-gutters dense>
-          <v-col cols="5">
+          <v-col v-if="$store.state.class !== '0'" cols="5">
             <Status :mode="mode" :turn="turn" :inventory_attack="inventory_attack" :inventory_defense="inventory_defense" :team_list="team_list" @ainv="update_ainv" @dinv="update_dinv"/>
           </v-col>
-          <v-col cols="3">
+          <v-col :cols="$store.state.class !== '0' ? '3' : '8'">
             <Turn :timer="timer" :mode="mode"/>
           </v-col>
           <v-col cols="4">
@@ -36,7 +36,7 @@
         </v-row>
         <v-row no-gutters dense>
           <v-col cols="1" >
-            <v-icon @click="launch_minigame">mdi-controller-classic</v-icon>
+            <v-icon @click="launch_minigame" v-if="$store.state.class !== '0'">mdi-controller-classic</v-icon>
           </v-col>
           <v-col cols="11">
             <Header/>
@@ -98,8 +98,12 @@ export default {
       this.minigame_mode = false
       if(snapshot.val() !== 2){
         this.get_time_idx(val => {
-          this.run_timer(val)
-          this.onChangeMode()
+          const time_conf = this.$firebase.database().ref('time_conf')
+          time_conf.once("value", snapshot => {
+            let T = snapshot.val()
+            this.run_timer(val, T)
+          })
+          if(this.$store.state.class !== "0") this.onChangeMode()
         });
       }
     })
@@ -117,8 +121,7 @@ export default {
       })
     },
 
-    run_timer(val) {
-      const T=[120,5,300,5]
+    run_timer(val, T) {
       let timer = 0
       if(this.mode === 0){
         timer = T[0] - val % (T[0] + T[1] + T[2] + T[3])
@@ -129,7 +132,7 @@ export default {
       if(timer < 0){
         setTimeout(() => {
           this.get_time_idx(new_val => {
-            this.run_timer(new_val)
+            this.run_timer(new_val, T)
           });
         }, 1000)
         return;
@@ -161,7 +164,6 @@ export default {
         this.armor_bottom = result.data.bottom
       })
       this.$http.get(`${this.$host}get_attack?me=${this.$store.state.class}`).then(result => {
-        console.log(result.data.team_list)
         this.team_list= JSON.parse(result.data.team_list)
       })
 

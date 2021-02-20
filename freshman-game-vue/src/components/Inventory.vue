@@ -82,8 +82,18 @@
                     this.dialog_id = id
                     this.dialog_count = id < 12 ? this.inventory_attack[id.toString()] : this.inventory_defense[id.toString()]
                 }
-            }
+            },
         },
+        mounted() {
+            if(this.$store.state.class === "0"){
+                for(let i = 1; i <= 11; i++){
+                    this.$set(this.inventory_attack, i, '')
+                }
+                for(let i = 12; i <= 27; i++){
+                    this.$set(this.inventory_defense, i, '')
+                }
+            }
+        }
     }
 </script>
 

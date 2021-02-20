@@ -7,13 +7,13 @@
             <v-col :class="this.mode === 0?'span-data red white--text':'span-data'" cols="3">
                 <div>Move</div>
                 <v-divider/>
-                <div>{{mv}}</div>
+                <div style="font-size: 1.4em; line-height: 1.0;">{{mv}}</div>
             </v-col>
             <v-divider vertical/>
             <v-col :class="this.mode === 1?'span-data red white--text':'span-data'" cols="6">
                 <div>Battle / Game</div>
                 <v-divider/>
-                <div>{{bg}}</div>
+                <div style="font-size: 1.4em; line-height: 1.0;">{{bg}}</div>
             </v-col>
         </v-row>
     </v-card>
