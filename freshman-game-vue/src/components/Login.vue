@@ -42,7 +42,6 @@
 </template>
 
 <script>
-    const md5 = require('md5')
     export default {
         name: "Login",
         data(){
@@ -53,14 +52,18 @@
         },
         methods: {
             submit(){
-
-                //console.log(this.$store.state.class)
-                if(!isNaN(this.id) && parseInt(this.id) > 0 && parseInt(this.id) <= 26 && this.pw === md5('KAI' + this.id+ 'ground').toString().substring(0, 7)){
-                    this.$store.commit('currentUser', this.id)
-                    this.$router.push('/');
-
-                }
-                else alert("Login Failed!")
+                this.$http.post(`${this.$host}login`, {
+                    "me": this.id,
+                    "pw": this.pw,
+                }).then(result => {
+                    if(result.data.result === 0){
+                        this.$store.commit('currentUser', this.id)
+                        this.$store.commit('currentPw', this.pw)
+                        this.$router.push('/');
+                    } else {
+                        alert("Login Failed!")
+                    }
+                })
             },
             freshman_submit(){
                 this.$store.commit('currentUser', "0")
