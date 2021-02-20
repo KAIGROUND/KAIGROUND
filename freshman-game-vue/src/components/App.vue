@@ -6,10 +6,10 @@
         <Minigame v-if="minigame_mode" :prices="prices" :mode="mode" @minidone="mini_done"/>
         <v-row no-gutters dense v-if="!minigame_mode">
           <v-col cols="5">
-            <Map/>
+            <Map :accent="map_accent_num"/>
           </v-col>
           <v-col cols="2">
-            <Stamina/>
+            <Stamina @class_accent="map_class_accent" @class_restore="map_class_restore"/>
           </v-col>
           <v-col cols="2">
             <Point/>
@@ -78,9 +78,10 @@ export default {
   data(){
     return ({
       time_idx: 0,
-      mode: 2,
+      mode: 3,
       timer: 0,
       turn: 0,
+      map_accent_num: 0,
       inventory_attack: {},
       inventory_defense: {},
       armor_top: 0,
@@ -124,9 +125,11 @@ export default {
     run_timer(val, T) {
       let timer = 0
       if(this.mode === 0){
-        timer = T[0] - val % (T[0] + T[1] + T[2] + T[3])
+        timer = T[0] - val % (T[0] + T[1] + T[2] + T[3] + T[4] + T[5])
       } else if(this.mode === 1){
-        timer = T[2] - (val - (T[0] + T[1])) % (T[0] + T[1] + T[2] + T[3])
+        timer = T[2] - (val - (T[0] + T[1])) % (T[0] + T[1] + T[2] + T[3] + T[4] + T[5])
+      } else if(this.mode === 2){
+        timer = T[4] - (val - (T[0] + T[1] + T[2] + T[3])) % (T[0] + T[1] + T[2] + T[3] + T[4] + T[5])
       }
 
       if(timer < 0){
@@ -144,15 +147,15 @@ export default {
       if(this.timer > 3) { // 버그 방지
         let looper = setInterval(() => {
           this.timer--
-          if (this.timer <= 0 || this.mode === 2) {
+          if (this.timer <= 0 || this.mode === 3) {
 
             clearInterval(looper)
-            this.mode = 2
+            this.mode = 3
           }
         }, 1000)
       } else {
         this.timer = 0
-        this.mode = 2
+        this.mode = 3
       }
     },
 
@@ -185,6 +188,12 @@ export default {
     },
     mini_done(){
       this.minigame_mode = false
+    },
+    map_class_accent(idx){
+      this.map_accent_num=idx
+    },
+    map_class_restore(){
+      this.map_accent_num=0
     }
   }
 };

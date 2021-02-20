@@ -8,8 +8,8 @@
         <v-simple-table>
             <tbody>
             <tr v-for="item in 13" :key="item" :bgcolor="item%2 ? '#EEEEEE': ''">
-                <td style="width:10%; padding: 0 0 0 12px" :class="class_accent(item)">{{ item }}</td>
-                <td style="width:40%" :class="class_accent(item)">
+                <td style="width:10%; padding: 0 0 0 12px" :class="class_accent(item)" @mouseover="$emit('class_accent', item)" @mouseleave="$emit('class_restore')">{{ item }}</td>
+                <td style="width:40%" :class="class_accent(item)" @mouseover="$emit('class_accent', item)" @mouseleave="$emit('class_restore')">
                     <div style="text-align: center">
                         <v-progress-linear
                                 :color="getCol(st(item))"
@@ -23,8 +23,8 @@
                     </div>
 
                 </td>
-                <td style="width:10%; padding: 0 0 0 12px" :class="class_accent(item+13)">{{ item+13 }}</td>
-                <td style="width:40%" :class="class_accent(item+13)">
+                <td style="width:10%; padding: 0 0 0 12px" :class="class_accent(item+13)" @mouseover="$emit('class_accent', item+13)" @mouseleave="$emit('class_restore')">{{ item+13 }}</td>
+                <td style="width:40%" :class="class_accent(item+13)"  @mouseover="$emit('class_accent', item+13)" @mouseleave="$emit('class_restore')">
                     <div style="text-align: center">
                         <v-progress-linear
                                 :color="getCol(st(item+13))"
@@ -83,5 +83,11 @@
     }
     .title > span{
         font-size: 1.2em;
+    }
+    tr:nth-child(2n+1):hover {
+        background-color: #EEEEEE !important;
+    }
+    tr:nth-child(2n):hover {
+        background-color: transparent !important;
     }
 </style>

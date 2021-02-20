@@ -135,7 +135,7 @@
                 snackbar_text: '',
                 move_disable: this.mode !== 0,
                 attack_disable: this.mode !== 1,
-                defense_disable: this.mode !== 1,
+                defense_disable: this.mode !== 2,
                 defense_team: 0,
                 defense_item: 0,
                 attack_item: 0,
@@ -199,22 +199,14 @@
 
         },
         watch:{
-            mode(val){
-                if(val === 0){
-                    this.move_disable = false
-                    this.attack_disable = true
-                    this.defense_disable = true
-                }
-                else if(val === 1){
-                    this.move_disable = true
-                    this.attack_disable = false
-                    this.defense_disable = false
-                } else {
-                    this.move_disable = true
-                    this.attack_disable = true
-                    this.defense_disable = true
-                }
-            },
+            mode(val) {
+                this.move_disable = true
+                this.attack_disable = true
+                this.defense_disable = true
+                if (val === 0) this.move_disable = false
+                if (val === 1) this.attack_disable = false
+                if (val === 2) this.defense_disable = false
+            }
         }
     }
 </script>
