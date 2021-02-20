@@ -251,9 +251,7 @@ def res_defense():
 
 @app.route("/inventory", methods=['GET'])
 def res_inventory():
-    global last_attack_list, Team_list, mp, pass_list
-    if request.args.get('pw') not in pass_list:
-        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
+    global last_attack_list, Team_list, mp
     team_id:int = int(request.args.get('me'))
     dic_def=dict();dic_attk=dict()
     for i in Team_list[team_id].def_itemlist:
@@ -270,9 +268,7 @@ def res_inventory():
 
 @app.route("/get_attack", methods=['GET'])
 def res_get_attack():
-    global last_attack_list, Team_list, mp, pass_list
-    if request.args.get('pw') not in pass_list:
-        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
+    global last_attack_list, Team_list, mp
     team_id:int = int(request.args.get('me'))
     dic=dict()
     for i in last_attack_list[team_id]:
@@ -281,9 +277,7 @@ def res_get_attack():
 
 @app.route("/minigame", methods=['GET'])
 def res_minigame():
-    global last_attack_list, Team_list, mp, item_set_left, pass_list
-    if request.args.get('pw') not in pass_list:
-        return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
+    global last_attack_list, Team_list, mp, item_set_left
     team_id:int=int(request.args.get('me'))
     sec=Team_list[team_id].pos
     dic=dict()
