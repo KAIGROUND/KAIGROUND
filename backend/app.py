@@ -7,6 +7,7 @@ from firebase_admin import credentials, db
 from threading import Thread, Timer
 import sys, time, firebase_admin, random
 from waitress import serve
+import logging
 
 app = Flask(__name__)
 CORS(app)
@@ -14,6 +15,9 @@ cred = credentials.Certificate("./kaistground-firebase-adminsdk-gmdug-6d30cf4f0d
 admin = firebase_admin.initialize_app(cred, {'databaseURL':'https://kaistground-default-rtdb.firebaseio.com'})
 game_thread = None
 status = db.reference('status')
+logger = logging.getLogger('waitress')
+logger.setLevel(logging.INFO)
+
 stop_sig = False
 
 time_idx=None
