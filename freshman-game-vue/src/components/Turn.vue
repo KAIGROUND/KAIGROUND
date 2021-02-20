@@ -7,13 +7,19 @@
             <v-col :class="this.mode === 0?'span-data red white--text':'span-data'" cols="3">
                 <div>Move</div>
                 <v-divider/>
-                <div style="font-size: 1.4em; line-height: 1.0;">{{mv}}</div>
+                <div style="font-size: 1.4em; line-height: 1.0;">{{counter(1)}}</div>
             </v-col>
-            <v-divider vertical/>
-            <v-col :class="this.mode === 1?'span-data red white--text':'span-data'" cols="6">
-                <div>Battle / Game</div>
+            <v-divider vertical style="margin-left: -1px"/>
+            <v-col :class="this.mode === 1?'span-data red white--text':'span-data'" cols="3">
+                <div style="margin: -13px 0">Attack<br>Game</div>
                 <v-divider/>
-                <div style="font-size: 1.4em; line-height: 1.0;">{{bg}}</div>
+                <div style="font-size: 1.4em; line-height: 1.0;">{{counter(2)}}</div>
+            </v-col>
+            <v-divider vertical style="margin-left: -1px"/>
+            <v-col :class="this.mode === 2?'span-data red white--text':'span-data'" cols="3">
+                <div style="margin: 0 -2px">Defense</div>
+                <v-divider/>
+                <div style="font-size: 1.4em; line-height: 1.0;">{{counter(3)}}</div>
             </v-col>
         </v-row>
     </v-card>
@@ -24,16 +30,9 @@
     export default {
         name: "Turn",
         props: ['mode', 'timer'],
-        computed: {
-            mv(){
-                if(this.mode === 0){
-                    const min = Math.floor(this.timer / 60)
-                    const sec = this.timer % 60
-                    return `${min}:${sec > 9 ? sec : '0' + sec}`
-                } else return '0:00'
-            },
-            bg(){
-                if(this.mode === 1){
+        methods: {
+            counter(mode){
+                if(this.mode === mode){
                     const min = Math.floor(this.timer / 60)
                     const sec = this.timer % 60
                     return `${min}:${sec > 9 ? sec : '0' + sec}`

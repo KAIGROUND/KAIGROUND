@@ -134,6 +134,7 @@
                 this.dialog_c=false
                 this.$http.post(`${this.$host}miniselect`, {
                     "me": this.$store.state.class,
+                    "pw": this.$store.state.pw,
                     "select": this.idx
                 }).then(result => {
                     if (result.data.result === 0) {
@@ -156,6 +157,7 @@
                 this.dialog1=false
                 this.$http.post(`${this.$host}minisuccess`, {
                     "me": this.$store.state.class,
+                    "pw": this.$store.state.pw,
                     "select": this.idx,
                     "success": res
                 }).then(result => {

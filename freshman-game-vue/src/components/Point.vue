@@ -54,4 +54,10 @@
     .title > span{
         font-size: 1.2em;
     }
+    tr:nth-child(2n+1):hover {
+        background-color: #EEEEEE !important;
+    }
+    tr:nth-child(2n):hover {
+        background-color: transparent !important;
+    }
 </style>

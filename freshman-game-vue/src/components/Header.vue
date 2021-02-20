@@ -13,6 +13,7 @@
         methods:{
             logout(){
                 this.$store.commit('currentUser', null)
+                this.$store.commit('currentPw', null)
                 this.$router.push('/login')
             }
         }

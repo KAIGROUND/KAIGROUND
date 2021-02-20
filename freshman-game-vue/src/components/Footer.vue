@@ -44,22 +44,6 @@
             <v-col :class="cur_turn(11)">
                 <span>11st Turn</span>
             </v-col>
-            <v-divider vertical/>
-            <v-col :class="cur_turn(12)">
-                <span>12nd Turn</span>
-            </v-col>
-            <v-divider vertical/>
-            <v-col :class="cur_turn(13)">
-                <span>13th Turn</span>
-            </v-col>
-            <v-divider vertical/>
-            <v-col :class="cur_turn(14)">
-                <span>14th Turn</span>
-            </v-col>
-            <v-divider vertical/>
-            <v-col :class="cur_turn(15)">
-                <span>15th Turn</span>
-            </v-col>
         </v-row>
     </v-card>
 

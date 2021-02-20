@@ -135,7 +135,7 @@
                 snackbar_text: '',
                 move_disable: this.mode !== 0,
                 attack_disable: this.mode !== 1,
-                defense_disable: this.mode !== 1,
+                defense_disable: this.mode !== 2,
                 defense_team: 0,
                 defense_item: 0,
                 attack_item: 0,
@@ -148,13 +148,14 @@
                 this.$http.post(`${this.$host}attack`, {
                     "me": this.$store.state.class,
                     "classroom": this.attack_classroom,
+                    "pw": this.$store.state.pw,
                     "item": this.id_to_item.indexOf(this.attack_item)
                 }).then(result => {
                     if(result.data.result !== 0){
                         this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
                         this.snackbar = true
                     } else {
-                        this.snackbar_text = result.data.suc_msg +' 점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
+                        this.snackbar_text = result.data.suc_msg +'\n점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
                         this.snackbar = true
                         this.attack_disable = true
                         this.$emit('ainv', JSON.parse(result.data.attack_list))
@@ -164,6 +165,7 @@
             run_move(){
                 this.$http.post(`${this.$host}move`, {
                     "me": this.$store.state.class,
+                    "pw": this.$store.state.pw,
                     "area": this.move_pos,
                     "initial": this.turn === 1 ? 0 : 1
                 }).then(result => {
@@ -171,7 +173,7 @@
                         this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
                         this.snackbar = true
                     } else {
-                        this.snackbar_text = '성공적으로 이동되었습니다. 팀 이동은 시간 종료 후 일괄 표시됩니다.'
+                        this.snackbar_text = result.data.suc_msg+'\n팀 이동은 시간 종료 후 일괄 표시됩니다.'
                         this.snackbar = true
                         this.move_disable = true
                     }
@@ -181,13 +183,14 @@
                 this.$http.post(`${this.$host}defense`, {
                     "me": this.$store.state.class,
                     "classroom": this.defense_team,
+                    "pw": this.$store.state.pw,
                     "item": this.id_to_item.indexOf(this.defense_item)
                 }).then(result => {
                     if(result.data.result !== 0){
                         this.snackbar_text = result.data.err_msg ?? '알 수 없는 오류가 발생했습니다.'
                         this.snackbar = true
                     } else {
-                        this.snackbar_text = result.data.suc_msg +' 점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
+                        this.snackbar_text = result.data.suc_msg +'\n점수 및 스테미나는 시간 종료 후 일괄 표시됩니다.'
                         this.snackbar = true
                         this.$emit('dinv', JSON.parse(result.data.defense_list))
                     }
@@ -196,22 +199,14 @@
 
         },
         watch:{
-            mode(val){
-                if(val === 0){
-                    this.move_disable = false
-                    this.attack_disable = true
-                    this.defense_disable = true
-                }
-                else if(val === 1){
-                    this.move_disable = true
-                    this.attack_disable = false
-                    this.defense_disable = false
-                } else {
-                    this.move_disable = true
-                    this.attack_disable = true
-                    this.defense_disable = true
-                }
-            },
+            mode(val) {
+                this.move_disable = true
+                this.attack_disable = true
+                this.defense_disable = true
+                if (val === 0) this.move_disable = false
+                if (val === 1) this.attack_disable = false
+                if (val === 2) this.defense_disable = false
+            }
         }
     }
 </script>
