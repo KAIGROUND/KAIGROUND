@@ -11,7 +11,7 @@
             </v-col>
             <v-divider vertical style="margin-left: -1px"/>
             <v-col :class="this.mode === 1?'span-data red white--text':'span-data'" cols="3">
-                <div style="margin: -13px 0">Attack<br>Game</div>
+                <div :style="$store.state.class === '0' ? '' : 'margin: -13px 0'">Attack / Game</div>
                 <v-divider/>
                 <div style="font-size: 1.4em; line-height: 1.0;">{{counter(2)}}</div>
             </v-col>
