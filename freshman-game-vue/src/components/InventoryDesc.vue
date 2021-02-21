@@ -32,7 +32,7 @@
                 </div>
 
                 <v-rating
-                        :value="val2/2"
+                        :value="val2*2"
                         color="amber"
                         dense
                         half-increments
