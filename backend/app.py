@@ -342,14 +342,14 @@ def res_miniselect():
     if item_set_av[team_id][sec][sel]:
         return jsonify({'result':2,'err_msg':'해당 아이템 세트는 이미 도전한 아이템 세트 입니다.'})
     if minigame_tried[team_id]:
-        return jsonify({'result':1,'err_msg':'한턴에 두번 아이템 얻는건 좀 너무하지 않나요?'})
-    minigame_tried[team_id]=1 
-    item_set_left[sec][sel]-=1;item_set_av[team_id][sec][sel]=1
+        return jsonify({'result':3,'err_msg':'한턴에 두번 아이템 세트에 도전하는건 좀 너무하지 않나요?'})
+    minigame_tried[team_id]=1;item_set_av[team_id][Team_list[team_id].pos][sel]=1
+    item_set_left[sec][sel]-=1
     return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임의 %d번째 게임을 해주세요!'%(minigame_ppt_idx[sec][sel][0],minigame_ppt_idx[sec][sel][1])}) #minigame_ppt_idx[sec][sel]
 
 @app.route("/minisuccess", methods=['POST'])
 def res_minisuccess ():
-    global last_attack_list, Team_list, mp, item_set_left, pass_list
+    global last_attack_list, Team_list, mp, item_set_left, pass_list, minigame_tried, item_set_av
     data = request.get_json()
     if not data['me'].isdigit():
         return jsonify({'result':1,'err_msg':'Wrong Reuest'})
