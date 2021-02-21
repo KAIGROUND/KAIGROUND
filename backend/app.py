@@ -447,7 +447,7 @@ def every_second():
                     Team_list[i+1].update_health(-j[1])
                 update_pt.append([j[1],j[0]])
             if Team_list[i+1].sleep:
-                for j in update_pt: j[0]=5
+                for j in update_pt: j[0]=10
             for j in update_pt:
                 if j[0]>0: Team_list[j[1]].update_point(j[0])
         for i in range(n_team):
