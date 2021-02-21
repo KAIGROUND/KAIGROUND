@@ -420,7 +420,7 @@ def every_second():
                 dic['move_cnt']=moved_dis[i+1]
                 dic['sleep_cnt']=sleeped_his[i+1]
                 dic['kill_cnt']=kill_his[i+1]
-                set_value("winner", i+1, dic)
+                db.reference("winner").child(i+1).set(dic)
             # rank_history
 
         set_value("status", "turn", turn)
