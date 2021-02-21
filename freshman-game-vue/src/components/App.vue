@@ -181,6 +181,7 @@ export default {
     },
     update_ainv(list){
       this.inventory_attack=list
+      this.launch_minigame()
     },
     update_dinv(list){
       this.inventory_defense=list
