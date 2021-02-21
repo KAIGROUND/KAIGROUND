@@ -44,6 +44,7 @@
         </v-row>
       </v-container>
     </div>
+    <Result v-if="show_result" @close="show_result = false" :result_data="result_data"></Result>
   </v-app>
 </template>
 
@@ -58,11 +59,13 @@ import Armor from "@/components/Armor";
 import Footer from "@/components/Footer";
 import Header from "./Header";
 import Minigame from "./Minigame";
+import Result from "./Result";
 
 export default {
   name: 'App',
 
   components: {
+    Result,
     Minigame,
     Footer,
     Armor,
@@ -88,18 +91,21 @@ export default {
       armor_bottom: 0,
       team_list: {},
       prices: {},
+      show_result: false,
+      result_data: null,
       minigame_mode: false,
     })
   },
 
   mounted() {
-    const status = this.$firebase.database().ref('status')
+    const db = this.$firebase.database()
+    const status = db.ref('status')
     status.child('mode').on("value", snapshot=>{
       this.mode = snapshot.val()
       this.minigame_mode = false
       if(snapshot.val() !== 3){
         this.get_time_idx(val => {
-          const time_conf = this.$firebase.database().ref('time_conf')
+          const time_conf = db.ref('time_conf')
           time_conf.once("value", snapshot => {
             let T = snapshot.val()
             this.run_timer(val, T)
@@ -111,6 +117,12 @@ export default {
 
     status.child('turn').on("value", snapshot=>{
       this.turn = parseInt(snapshot.val())
+    })
+
+    db.ref('winner').on("value", snapshot=>{
+      const final_result = snapshot.val()
+      this.result_data = final_result[this.$store.state.class] ?? null;
+      if(this.result_data) this.show_result = true
     })
   },
 

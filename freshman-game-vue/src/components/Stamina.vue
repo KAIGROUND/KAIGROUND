@@ -15,11 +15,11 @@
                                 :color="getCol(st(item))"
                                 :value="st(item)"
                                 style="height: 12px; margin-top: 12px; margin-bottom: -4px"
-                                :buffer-value="st(item) === 0 ? 0 : 200"
+                                :buffer-value="st(item) === 0 ? 0 : 100"
                                 stream
                                 rounded
                         />
-                        <span style="font-size: 0.8em;">{{st(item)/10 === 0 ? 'respawn...' : st(item)/5}}</span>
+                        <span style="font-size: 0.8em;">{{st(item)/5 === 0 ? 'respawn...' : st(item)/5}}</span>
                     </div>
 
                 </td>
@@ -30,11 +30,11 @@
                                 :color="getCol(st(item+13))"
                                 :value="st(item+13)"
                                 style="height: 12px; margin-top: 12px; margin-bottom: -4px"
-                                :buffer-value="st(item+13) === 0 ? 0 : 200"
+                                :buffer-value="st(item+13) === 0 ? 0 : 100"
                                 stream
                                 rounded
                         />
-                        <span style="font-size: 0.8em;">{{st(item+13)/10 === 0 ? 'respawn...' : st(item+13)/5}}</span>
+                        <span style="font-size: 0.8em;">{{st(item+13)/5 === 0 ? 'respawn...' : st(item+13)/5}}</span>
                     </div>
                 </td>
             </tr>
@@ -53,8 +53,8 @@
         },
         methods: {
             getCol(val){
-                if(val > 132) return 'green';
-                else if(val > 66) return 'orange';
+                if(val > 66) return 'green';
+                else if(val > 33) return 'orange';
                 else if(val === 0) return 'blue';
                 else return 'red darken-2'
             },
@@ -72,7 +72,7 @@
                     this.$set(this.stamina_list, i, snapshot.val()[i]*5)
                 }
             })
-        }, 
+        },
     }
 </script>
 
