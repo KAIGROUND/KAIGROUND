@@ -53,8 +53,8 @@
         },
         methods: {
             getCol(val){
-                if(val > 66) return 'green';
-                else if(val > 33) return 'orange';
+                if(val > 132) return 'green';
+                else if(val > 66) return 'orange';
                 else if(val === 0) return 'blue';
                 else return 'red darken-2'
             },
@@ -69,7 +69,7 @@
             const stamina = this.$firebase.database().ref('stamina')
             stamina.on("value", snapshot => {
                 for(let i in snapshot.val()){
-                    this.$set(this.stamina_list, i, snapshot.val()[i]*5)
+                    this.$set(this.stamina_list, i, snapshot.val()[i]*10)
                 }
             })
         },
