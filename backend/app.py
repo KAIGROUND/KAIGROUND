@@ -414,13 +414,15 @@ def every_second():
             set_value("status", "mode", 3)
             set_value("status", "turn", 0)
             #Game end
-            
+            all_dic=dict()
             for i in range(n_team):
                 dic=dict()
                 dic['move_cnt']=moved_dis[i+1]
                 dic['sleep_cnt']=sleeped_his[i+1]
                 dic['kill_cnt']=kill_his[i+1]
-                db.reference("winner").child(str(i+1)).set(dic)
+                dic['rank']=rank_history[turn-2][i+1] #rank
+                all_dic[i+1]=dic
+            db.reference("winner").set(all_dic)
             # rank_history
 
         set_value("status", "turn", turn)
