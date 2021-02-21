@@ -7,19 +7,19 @@
             <v-col :class="this.mode === 0?'span-data red white--text':'span-data'" cols="3">
                 <div>Move</div>
                 <v-divider/>
-                <div style="font-size: 1.4em; line-height: 1.0;">{{counter(1)}}</div>
+                <div style="font-size: 1.4em; line-height: 1.0;">{{counter(0)}}</div>
             </v-col>
             <v-divider vertical style="margin-left: -1px"/>
             <v-col :class="this.mode === 1?'span-data red white--text':'span-data'" cols="3">
                 <div :style="$store.state.class === '0' ? '' : 'margin: -13px 0'">Attack / Game</div>
                 <v-divider/>
-                <div style="font-size: 1.4em; line-height: 1.0;">{{counter(2)}}</div>
+                <div style="font-size: 1.4em; line-height: 1.0;">{{counter(1)}}</div>
             </v-col>
             <v-divider vertical style="margin-left: -1px"/>
             <v-col :class="this.mode === 2?'span-data red white--text':'span-data'" cols="3">
                 <div style="margin: 0 -2px">Defense</div>
                 <v-divider/>
-                <div style="font-size: 1.4em; line-height: 1.0;">{{counter(3)}}</div>
+                <div style="font-size: 1.4em; line-height: 1.0;">{{counter(2)}}</div>
             </v-col>
         </v-row>
     </v-card>

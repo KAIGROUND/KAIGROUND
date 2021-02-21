@@ -97,7 +97,7 @@ export default {
     status.child('mode').on("value", snapshot=>{
       this.mode = snapshot.val()
       this.minigame_mode = false
-      if(snapshot.val() !== 2){
+      if(snapshot.val() !== 3){
         this.get_time_idx(val => {
           const time_conf = this.$firebase.database().ref('time_conf')
           time_conf.once("value", snapshot => {
@@ -148,7 +148,6 @@ export default {
         let looper = setInterval(() => {
           this.timer--
           if (this.timer <= 0 || this.mode === 3) {
-
             clearInterval(looper)
             this.mode = 3
           }
