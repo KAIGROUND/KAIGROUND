@@ -69,10 +69,10 @@
             const stamina = this.$firebase.database().ref('stamina')
             stamina.on("value", snapshot => {
                 for(let i in snapshot.val()){
-                    this.$set(this.stamina_list, i, snapshot.val()[i]*10)
+                    this.$set(this.stamina_list, i, snapshot.val()[i]*20)
                 }
             })
-        },
+        }, 
     }
 </script>
 
