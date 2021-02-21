@@ -22,7 +22,7 @@ T = db.reference('time_conf').get()
 n_team = 26
 n_node = 42
 
-attack_dictionary = {'개강':{'attack':1, 'range':10}, '퀴즈':{'attack':2, 'range':6}, '무거운 전공책':{'attack':2, 'range':2}, '아침 수업':{'attack':2, 'range':4}, '연습반':{'attack':4, 'range':2}, '기숙사 호실 이동':{'attack':4, 'range':1}, '과제':{'attack':4, 'range':3}, '계절 학기':{'attack':4, 'range':3}, '중간고사':{'attack':6, 'range':2}, '기말고사':{'attack':8, 'range':4}, '실험 수업':{'attack':4, 'range':3}}
+attack_dictionary = {'개강':{'attack':1, 'range':3}, '퀴즈':{'attack':2, 'range':4}, '무거운 전공책':{'attack':2, 'range':2}, '아침 수업':{'attack':2, 'range':3}, '연습반':{'attack':4, 'range':2}, '기숙사 호실 이동':{'attack':4, 'range':1}, '과제':{'attack':4, 'range':3}, '계절 학기':{'attack':4, 'range':3}, '중간고사':{'attack':6, 'range':2}, '기말고사':{'attack':8, 'range':2}, '실험 수업':{'attack':4, 'range':3}}
 def_dictionary = {'예습복습':{'defense':1, 'armor':0}, '낮잠':{'defense':1, 'armor':0}, '야식':{'defense':1, 'armor':0}, '튜터링':{'defense':1, 'armor':0}, '족보':{'defense':3, 'armor':0}, '공강':{'defense':3, 'armor':0}, '딸기 파티':{'defense':3, 'armor':0}, '축제':{'defense':3, 'armor':0}, '라이프':{'defense':5, 'armor':0}, '수강 철회':{'defense':7, 'armor':0}}
 up_armor_dictionary = {'카이 야잠':2, '카이 돕바':2, '체크남방':2, '카이 후드티':2, '':0} #22, 23, 26, 27
 down_armor_dictionary = {'청바지':1, '카고바지':1, '':0} #24, 25
