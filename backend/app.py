@@ -150,6 +150,8 @@ def page_not_found(error):
 def res_login():
     global pass_list
     data = request.get_json()
+    if data['me']==None:
+        return jsonify({'result':1,'err_msg':'Wrong Reuest'})
     team_id=int(data['me']);ps=data['pw']
     if pass_list[team_id-1]==ps:
         return jsonify({'result':0,'suc_msg':'%d반 안녕하세요'%(team_id)})
@@ -160,6 +162,8 @@ def res_login():
 def res_move(): 
     global last_attack_list, Team_list, mp, moved, pass_list
     data = request.get_json()
+    if data['me']==None:
+        return jsonify({'result':1,'err_msg':'Wrong Reuest'})
     if data['pw'] not in pass_list:
         return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     if not data['area'].isdigit():
@@ -188,6 +192,8 @@ def res_move():
 def res_attack():
     global last_attack_list, Team_list, mp, attacked, pass_list
     data = request.get_json()
+    if data['me']==None:
+        return jsonify({'result':1,'err_msg':'Wrong Reuest'})
     if data['pw'] not in pass_list:
         return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     if not data['classroom'].isdigit():
@@ -223,6 +229,8 @@ def res_attack():
 def res_defense():
     global last_attack_list, Team_list, mp, defended, pass_list
     data = request.get_json()
+    if data['me']==None:
+        return jsonify({'result':1,'err_msg':'Wrong Reuest'})
     if data['pw'] not in pass_list:
         return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     team_id=int(data['me']);team_to_defend=int(data['classroom']);item_id=int(data['item'])
@@ -252,6 +260,8 @@ def res_defense():
 @app.route("/inventory", methods=['GET'])
 def res_inventory():
     global last_attack_list, Team_list, mp
+    if request.args.get('me')==None:
+        return jsonify({'result':1,'err_msg':'Wrong Reuest'})
     team_id:int = int(request.args.get('me'))
     dic_def=dict();dic_attk=dict()
     for i in Team_list[team_id].def_itemlist:
@@ -269,6 +279,8 @@ def res_inventory():
 @app.route("/get_attack", methods=['GET'])
 def res_get_attack():
     global last_attack_list, Team_list, mp
+    if request.args.get('me')==None:
+        return jsonify({'result':1,'err_msg':'Wrong Reuest'})
     team_id:int = int(request.args.get('me'))
     dic=dict()
     for i in last_attack_list[team_id]:
@@ -278,6 +290,8 @@ def res_get_attack():
 @app.route("/minigame", methods=['GET'])
 def res_minigame():
     global last_attack_list, Team_list, mp, item_set_left
+    if request.args.get('me')==None:
+        return jsonify({'result':1,'err_msg':'Wrong Reuest'})
     team_id:int=int(request.args.get('me'))
     sec=Team_list[team_id].pos
     dic=dict()
@@ -293,6 +307,8 @@ def res_minigame():
 def res_miniselect():
     global last_attack_list, Team_list, mp, item_set_left, item_set_av, minigame_ppt_idx,pass_list
     data = request.get_json()
+    if data['me']==None:
+        return jsonify({'result':1,'err_msg':'Wrong Reuest'})
     if data['pw'] not in pass_list:
         return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     team_id=int(data['me']);sel=int(data['select']);sec=Team_list[team_id].pos
@@ -309,6 +325,8 @@ def res_miniselect():
 def res_minisuccess ():
     global last_attack_list, Team_list, mp, item_set_left, pass_list
     data = request.get_json()
+    if data['me']==None:
+        return jsonify({'result':1,'err_msg':'Wrong Reuest'})
     if data['pw'] not in pass_list:
         return jsonify({'result':1,'err_msg':'권한이 없습니다.'})
     team_id=int(data['me']);sel=int(data['select']);suc=int(data['success'])
