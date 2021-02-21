@@ -35,6 +35,8 @@ pass_list = ["5a6d935", "b0c8260", "d3454b3", "23afb7b", "5f2dd02", "0cfdee4", "
 item_set_av=[];moved_most=[0 for i in range(n_team+1)]
 moved = [0 for i in range(n_team+1)]
 attacked = [0 for i in range(n_team+1)]
+minigame_tried= [0 for i in range(n_team+1)]
+
 defended = dict()
 check_update_point=1;end_of_game=1
 
@@ -344,7 +346,7 @@ def res_miniselect():
 
 @app.route("/minisuccess", methods=['POST'])
 def res_minisuccess ():
-    global last_attack_list, Team_list, mp, item_set_left, pass_list
+    global last_attack_list, Team_list, mp, item_set_left, pass_list, minigame_tried
     data = request.get_json()
     if not data['me'].isdigit():
         return jsonify({'result':1,'err_msg':'Wrong Reuest'})
@@ -353,6 +355,9 @@ def res_minisuccess ():
     team_id=int(data['me']);sel=int(data['select']);suc=int(data['success'])
     if not (0<=sel<=2):
         return jsonify({'result':1,'err_msg':'select 숫자가 0~2가 아닙니다.'})
+    if minigame_tried[team_id]:
+        return jsonify({'result':1,'err_msg':'한턴에 두번 아이템 얻는건 좀 너무하지 않나요?'})
+    minigame_tried[team_id]=1 
     pos=Team_list[team_id].pos
     if not suc:
         for i in mp.g[pos].items[sel]:
@@ -391,7 +396,7 @@ def set_interval(func, sec):
     return t
 
 def every_second():
-    global time_idx, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended, end_of_game, stop_sig
+    global time_idx, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended, end_of_game, stop_sig, minigame_tried
     #mode 0 : move, 1 : attack,game, 2 : def , 3 : wait
     #2분 시작할 때
     t_sum = T[0] + T[1] + T[2] + T[3] + T[4] + T[5]
@@ -422,7 +427,7 @@ def every_second():
     if time_idx%t_sum == (T[0] + T[1] + T[2] + 3):
         attacked = [0 for i in range(n_team+1)]
         moved = [0 for i in range(n_team+1)];check_update_point=1
-
+        minigame_tried = [0 for i in range(n_team+1)]
     #9분 시작할 때
     if time_idx%t_sum == (T[0] + T[1] + T[2] + T[3]):
         set_value("status", "mode", 2)
