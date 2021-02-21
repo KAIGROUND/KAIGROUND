@@ -15,7 +15,7 @@
                                 :color="getCol(st(item))"
                                 :value="st(item)"
                                 style="height: 12px; margin-top: 12px; margin-bottom: -4px"
-                                :buffer-value="st(item) === 0 ? 0 : 100"
+                                :buffer-value="st(item) === 0 ? 0 : 200"
                                 stream
                                 rounded
                         />
@@ -30,7 +30,7 @@
                                 :color="getCol(st(item+13))"
                                 :value="st(item+13)"
                                 style="height: 12px; margin-top: 12px; margin-bottom: -4px"
-                                :buffer-value="st(item+13) === 0 ? 0 : 100"
+                                :buffer-value="st(item+13) === 0 ? 0 : 200"
                                 stream
                                 rounded
                         />
