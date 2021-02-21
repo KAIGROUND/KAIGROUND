@@ -22,10 +22,10 @@ T = db.reference('time_conf').get()
 n_team = 26
 n_node = 42
 
-attack_dictionary = {'개강':{'attack':1, 'range':3}, '퀴즈':{'attack':2, 'range':4}, '무거운 전공책':{'attack':2, 'range':2}, '아침 수업':{'attack':2, 'range':3}, '연습반':{'attack':4, 'range':2}, '기숙사 호실 이동':{'attack':4, 'range':1}, '과제':{'attack':4, 'range':3}, '계절 학기':{'attack':4, 'range':3}, '중간고사':{'attack':6, 'range':2}, '기말고사':{'attack':8, 'range':2}, '실험 수업':{'attack':4, 'range':3}}
-def_dictionary = {'예습복습':{'defense':1, 'armor':0}, '낮잠':{'defense':1, 'armor':0}, '야식':{'defense':1, 'armor':0}, '튜터링':{'defense':1, 'armor':0}, '족보':{'defense':3, 'armor':0}, '공강':{'defense':3, 'armor':0}, '딸기 파티':{'defense':3, 'armor':0}, '축제':{'defense':3, 'armor':0}, '라이프':{'defense':5, 'armor':0}, '수강 철회':{'defense':7, 'armor':0}}
-up_armor_dictionary = {'카이 야잠':2, '카이 돕바':2, '체크남방':2, '카이 후드티':2, '':0} #22, 23, 26, 27
-down_armor_dictionary = {'청바지':1, '카고바지':1, '':0} #24, 25
+attack_dictionary = {'개강':{'attack':2, 'range':3}, '퀴즈':{'attack':4, 'range':4}, '무거운 전공책':{'attack':4, 'range':2}, '아침 수업':{'attack':4, 'range':3}, '연습반':{'attack':8, 'range':2}, '기숙사 호실 이동':{'attack':8, 'range':1}, '과제':{'attack':8, 'range':3}, '계절 학기':{'attack':8, 'range':3}, '중간고사':{'attack':12, 'range':2}, '기말고사':{'attack':16, 'range':2}, '실험 수업':{'attack':4, 'range':3}}
+def_dictionary = {'예습복습':{'defense':2, 'armor':0}, '낮잠':{'defense':2, 'armor':0}, '야식':{'defense':2, 'armor':0}, '튜터링':{'defense':2, 'armor':0}, '족보':{'defense':6, 'armor':0}, '공강':{'defense':6, 'armor':0}, '딸기 파티':{'defense':6, 'armor':0}, '축제':{'defense':6, 'armor':0}, '라이프':{'defense':10, 'armor':0}, '수강 철회':{'defense':14, 'armor':0}}
+up_armor_dictionary = {'카이 야잠':4, '카이 돕바':4, '체크남방':4, '카이 후드티':4, '':0} #22, 23, 26, 27
+down_armor_dictionary = {'청바지':2, '카고바지':2, '':0} #24, 25
 
 id_to_item=['','개강','퀴즈','무거운 전공책','아침 수업','기숙사 호실 이동','연습반','과제','실험 수업','계절 학기','중간고사','기말고사','예습복습','낮잠','야식','튜터링','족보','공강','딸기 파티','축제','라이프','수강 철회','카이 야잠','카이 돕바','청바지','카고바지','체크남방','카이 후드티']
 item_to_id={'': 0, '개강': 1, '퀴즈': 2, '무거운 전공책': 3, '아침 수업': 4, '기숙사 호실 이동': 5, '연습반': 6, '과제': 7, '실험 수업': 8, '계절 학기': 9, '중간고사': 10, '기말고사': 11, '예습복습': 12, '낮잠': 13, '야식': 14, '튜터링': 15, '족보': 16, '공강': 17, '딸기 파티': 18, '축제': 19, '라이프': 20, '수강 철회': 21, '카이 야잠': 22, '카이 돕바': 23, '청바지': 24, '카고바지': 25, '체크남방': 26, '카이 후드티': 27}
@@ -133,7 +133,7 @@ class Team:
                 rt+=[i]
         return rt
 
-Team_list = [Team(0,0,0,[],[],0)]+[Team(i+1,10,0,['개강'],[],0) for i in range(n_team)]
+Team_list = [Team(0,0,0,[],[],0)]+[Team(i+1,20,0,['개강'],[],0) for i in range(n_team)]
 last_attack_list=[[] for i in range(n_team+1)] #last_attack_list[a][b] 뜻 a 팀이 last_attack_list[a][b]한테 공격 받음
 
 def attack(a:Team, b:Team, attack_item:str): #a attack b with attack_item
@@ -381,6 +381,7 @@ def every_second():
             stop_sig = True
             set_value("status", "mode", 3)
             set_value("status", "turn", 0)
+            #Game end
 
         set_value("status", "turn", turn)
         set_value("status", "mode", 0)
@@ -389,7 +390,7 @@ def every_second():
         for i in range(n_team):
             if Team_list[i+1].sleep:
                 Team_list[i+1].sleep=0
-                Team_list[i+1].hp=10+up_armor_dictionary[Team_list[i+1].up_armor]+down_armor_dictionary[Team_list[i+1].down_armor]
+                Team_list[i+1].hp=20+up_armor_dictionary[Team_list[i+1].up_armor]+down_armor_dictionary[Team_list[i+1].down_armor]
                 Team_list[i+1].up_armor='';Team_list[i+1].down_armor=''
                 Team_list[i+1].move_team(random.randint(1,n_node),init=1)
         update_database()

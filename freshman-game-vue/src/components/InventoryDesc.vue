@@ -18,7 +18,7 @@
                     class="mx-0"
             >
                 <v-rating
-                        :value="val1"
+                        :value="val1/2"
                         color="amber"
                         dense
                         half-increments
@@ -32,7 +32,7 @@
                 </div>
 
                 <v-rating
-                        :value="val2"
+                        :value="val2/2"
                         color="amber"
                         dense
                         half-increments
