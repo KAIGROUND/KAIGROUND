@@ -32,7 +32,10 @@ item_to_id={'': 0, '개강': 1, '퀴즈': 2, '무거운 전공책': 3, '아침 �
 item_set_left=[[], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4]]
 minigame_ppt_idx=[[], [[129, 2], [400, 17], [94, 1]], [[8, 2], [20, 5], [177, 3]], [[177, 13], [137, 1], [529, 8]], [[99, 2], [8, 1], [400, 20]], [[177, 14], [99, 1], [539, 5]], [[20, 3], [20, 2], [531, 2]], [[137, 2], [94, 3], [177, 2]], [[177, 8], [177, 5], [529, 9]], [[539, 3], [177, 10], [383, 1]], [[177, 6], [400, 7], [8, 4]], [[531, 4], [129, 1], [41, 1]], [[99, 3], [177, 5], [529, 10]], [[30, 4], [531, 3], [177, 9]], [[400, 10], [30, 7], [485, 2]], [[151, 2], [400, 11], [151, 1]], [[20, 4], [177, 19], [400, 2]], [[451, 1], [529, 4], [137, 4]], [[451, 2], [529, 7], [8, 9]], [[169, 1], [529, 3], [20, 1]], [[30, 3], [30, 1], [531, 5]], [[83, 2], [8, 6], [94, 5]], [[400, 16], [464, 1], [400, 18]], [[83, 1], [20, 7], [539, 9]], [[400, 15], [539, 4], [20, 6]], [[539, 7], [529, 6], [177, 7]], [[8, 3], [531, 1], [539, 1]], [[529, 2], [177, 11], [539, 2]], [[400, 12], [400, 4], [425, 2]], [[529, 5], [177, 20], [400, 9]], [[400, 14], [94, 4], [8, 10]], [[177, 12], [539, 10], [400, 1]], [[177, 8], [30, 5], [30, 2]], [[30, 6], [177, 16], [177, 18]], [[539, 8], [30, 8], [83, 3]], [[177, 15], [539, 6], [468, 1]], [[400, 6], [20, 8], [425, 1]], [[8, 5], [529, 1], [508, 1]], [[94, 6], [400, 13], [94, 2]], [[8, 7], [137, 3], [485, 1]], [[177, 1], [30, 9], [177, 4]], [[177, 17], [41, 2], [400, 3]], [[99, 4], [400, 19], [8, 8]]]
 pass_list = ["5a6d935", "b0c8260", "d3454b3", "23afb7b", "5f2dd02", "0cfdee4", "bb33c82", "bd75bed", "8506f42", "2f2fdd7", "38d9924", "8c587a1", "1c90a1f", "5d573b6", "bcc3d15", "e2aede3", "c8598e5", "75311b4", "d35dad6", "dfcf865", "e3e14ed", "5c53d72", "20d48be", "2f3174b", "8f282ae", "ae7d478"]
-item_set_av=[];moved_dis=[0 for i in range(n_team+1)]
+item_set_av=[]
+moved_dis=[0 for i in range(n_team+1)]
+sleeped_his=[0 for i in range(n_team+1)]
+kill_his=[0 for i in range(n_team+1)]
 rank_history = []
 moved = [0 for i in range(n_team+1)]
 attacked = [0 for i in range(n_team+1)]
@@ -118,7 +121,7 @@ class Team:
         self.hp+=health
         if self.hp<=0:
             self.sleep=1;self.hp=0
-            self.update_point(-5)
+            self.update_point(-5) 
 
     def update_point(self, point):
         self.points+=point
@@ -399,7 +402,7 @@ def set_interval(func, sec):
     return t
 
 def every_second():
-    global time_idx, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended, end_of_game, stop_sig, minigame_tried, moved_dis, rank_history
+    global time_idx, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended, end_of_game, stop_sig, minigame_tried, moved_dis, rank_history, sleeped_his, kill_his
     #mode 0 : move, 1 : attack,game, 2 : def , 3 : wait
     #2분 시작할 때
     t_sum = T[0] + T[1] + T[2] + T[3] + T[4] + T[5]
@@ -412,7 +415,12 @@ def every_second():
             set_value("status", "turn", 0)
             #Game end
             
-            # moved_dis
+            for i in range(n_team):
+                dic=dict()
+                dic['move_cnt']=moved_dis[i+1]
+                dic['sleep_cnt']=sleeped_his[i+1]
+                dic['kill_cnt']=kill_his[i+1]
+                set_value("winner", i+1, dic)
             # rank_history
 
         set_value("status", "turn", turn)
@@ -421,6 +429,7 @@ def every_second():
     if time_idx%t_sum == (T[0] + 3):
         for i in range(n_team):
             if Team_list[i+1].sleep:
+                sleeped_his[i+1]+=1
                 Team_list[i+1].sleep=0
                 Team_list[i+1].hp=20+up_armor_dictionary[Team_list[i+1].up_armor]+down_armor_dictionary[Team_list[i+1].down_armor]
                 Team_list[i+1].up_armor='';Team_list[i+1].down_armor=''
@@ -447,7 +456,9 @@ def every_second():
                     Team_list[i+1].update_health(-j[1])
                 update_pt.append([j[1],j[0]])
             if Team_list[i+1].sleep:
-                for j in update_pt: j[0]=10
+                for j in update_pt: 
+                    j[0]=10
+                    kill_his[j[1]]+=1
             for j in update_pt:
                 if j[0]>0: Team_list[j[1]].update_point(j[0])
         for i in range(n_team):
