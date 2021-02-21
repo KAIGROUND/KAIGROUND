@@ -7,15 +7,17 @@
         <v-divider/>
         <v-img
                 max-height="620px"
-                src="../assets/map.png"
-        >
+                src="../assets/map.png">
+
+            <div class="map-info">맵 상의 정점 또는 오른쪽 스테미나에 커서를 갖다 대어 반 위치를 확인하세요.</div>
             <v-switch v-model="switch1" inset class="switch-me" :label="switch1 ? '팀 수 표시' : '구역 표시'"></v-switch>
+
 
             <div v-for="(i, idx) in this.node" :key="idx" @mouseover="mouseover(idx)" @mouseleave="mouseleave" @mousemove="mousemove">
                 <v-btn style="position: relative"
                        elevation="2"
                        fab
-                       :color="i.cur_team.includes($store.state.class) ? 'pink' : i.cur_team.includes(accent+'') ? 'orange' : 'indigo'"
+                       :color="i.cur_team.includes(accent+'') ? 'orange' : i.cur_team.includes($store.state.class) ? 'pink' : 'indigo'"
                        class="fab-small"
                        :style="'position:absolute;left: '+(i.pos[0])+'px; top: '+(i.pos[1])+'px;color:white'"
                 >{{switch1 ? i.cur_team.length ? i.cur_team.length:'' : idx+1}}</v-btn>
@@ -152,6 +154,13 @@
     }
     .switch-me{
         position:absolute;
-        margin-left: 500px;
+        right: 20px;
+        top: 20px;
+    }
+    .map-info{
+        top: 10px;
+        right: 20px;
+        position: absolute;
+        font-size: 0.7em;
     }
 </style>

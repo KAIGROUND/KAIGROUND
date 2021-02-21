@@ -107,7 +107,7 @@
         </v-row>
 
         <v-snackbar v-model="snackbar">
-            {{ snackbar_text }}
+            <div style="white-space: pre;">{{ snackbar_text }}</div>
 
             <template v-slot:action="{ attrs }">
                 <v-btn
