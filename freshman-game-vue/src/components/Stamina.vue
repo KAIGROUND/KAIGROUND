@@ -19,7 +19,7 @@
                                 stream
                                 rounded
                         />
-                        <span style="font-size: 0.8em;">{{st(item)/10 === 0 ? 'respawn...' : st(item)/10}}</span>
+                        <span style="font-size: 0.8em;">{{st(item)/10 === 0 ? 'respawn...' : st(item)/5}}</span>
                     </div>
 
                 </td>
@@ -34,7 +34,7 @@
                                 stream
                                 rounded
                         />
-                        <span style="font-size: 0.8em;">{{st(item+13)/10 === 0 ? 'respawn...' : st(item+13)/10}}</span>
+                        <span style="font-size: 0.8em;">{{st(item+13)/10 === 0 ? 'respawn...' : st(item+13)/5}}</span>
                     </div>
                 </td>
             </tr>
@@ -69,7 +69,7 @@
             const stamina = this.$firebase.database().ref('stamina')
             stamina.on("value", snapshot => {
                 for(let i in snapshot.val()){
-                    this.$set(this.stamina_list, i, snapshot.val()[i]*10)
+                    this.$set(this.stamina_list, i, snapshot.val()[i]*5)
                 }
             })
         },
