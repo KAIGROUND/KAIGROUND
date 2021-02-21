@@ -426,14 +426,13 @@ def every_second():
                 Team_list[i+1].up_armor='';Team_list[i+1].down_armor=''
                 Team_list[i+1].move_team(random.randint(1,n_node),init=1)
         update_database()
+        defended=dict()
     #7분 시작할 때
     if time_idx%t_sum == (T[0] + T[1]):
         set_value("status", "mode", 1)
     #7분 끝나고 3초
     if time_idx%t_sum == (T[0] + T[1] + T[2] + 3):
-        attacked = [0 for i in range(n_team+1)]
         moved = [0 for i in range(n_team+1)];check_update_point=1
-        minigame_tried = [0 for i in range(n_team+1)]
     #9분 시작할 때
     if time_idx%t_sum == (T[0] + T[1] + T[2] + T[3]):
         set_value("status", "mode", 2)
@@ -455,7 +454,6 @@ def every_second():
             if Team_list[i+1].sleep:
                 Team_list[i+1].move_team(0,init=1)
         update_database()
-        defended=dict()
         last_attack_list=[[] for i in range(n_team+1)]
         rank_nw=[0 for i in range(n_team+1)] #input the rank of each class
         nw=[];mx=1e9;rank=0
@@ -467,6 +465,8 @@ def every_second():
                 rank+=1;mx=i[0]
             rank_nw[i[1]]=rank
         rank_history.append(rank_nw)
+        minigame_tried = [0 for i in range(n_team+1)]
+        attacked = [0 for i in range(n_team+1)]
     time_idx += 1
     set_value("status", "time_idx", time_idx)
 
