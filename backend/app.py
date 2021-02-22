@@ -21,6 +21,7 @@ time_idx=None
 T = db.reference('time_conf').get()
 n_team = 26
 n_node = 42
+n_round = 11
 
 attack_dictionary = {'개강':{'attack':2, 'range':3}, '퀴즈':{'attack':4, 'range':4}, '무거운 전공책':{'attack':4, 'range':2}, '아침 수업':{'attack':4, 'range':3}, '연습반':{'attack':8, 'range':2}, '기숙사 호실 이동':{'attack':8, 'range':1}, '과제':{'attack':8, 'range':3}, '계절 학기':{'attack':8, 'range':3}, '중간고사':{'attack':12, 'range':2}, '기말고사':{'attack':16, 'range':2}, '실험 수업':{'attack':4, 'range':3}}
 def_dictionary = {'예습복습':{'defense':2, 'armor':0}, '낮잠':{'defense':2, 'armor':0}, '야식':{'defense':2, 'armor':0}, '튜터링':{'defense':2, 'armor':0}, '족보':{'defense':6, 'armor':0}, '공강':{'defense':6, 'armor':0}, '딸기 파티':{'defense':6, 'armor':0}, '축제':{'defense':6, 'armor':0}, '라이프':{'defense':10, 'armor':0}, '수강 철회':{'defense':14, 'armor':0}}
@@ -97,7 +98,8 @@ class graph:
         global moved_dis
         if not init and self.dis_node(team_pos, nd_id)>3:
             return 0
-        moved_dis[team_id]+=self.dis_node(team_pos, nd_id)
+        if not init:
+            moved_dis[team_id]+=self.dis_node(team_pos, nd_id)
         self.g[team_pos].teams.remove(team_id)
         self.g[nd_id].teams.append(team_id)
         return 1
@@ -351,7 +353,9 @@ def res_miniselect():
         return jsonify({'result':3,'err_msg':'한턴에 두번 아이템 세트에 도전하는건 좀 너무하지 않나요?'})
     minigame_tried[team_id]=1;item_set_av[team_id][Team_list[team_id].pos][sel]=1
     item_set_left[sec][sel]-=1
-    return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임의 %d번째 게임을 해주세요!'%(minigame_ppt_idx[sec][sel][0],minigame_ppt_idx[sec][sel][1])}) #minigame_ppt_idx[sec][sel]
+    if minigame_ppt_idx[sec][sel][0] in [99,178, 389, 468, 472, 513, 534]:
+        return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임을 시작해 주세요!'%(minigame_ppt_idx[sec][sel][0])}) 
+    return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임의 %d번째 게임을 시작해 주세요!'%(minigame_ppt_idx[sec][sel][0],minigame_ppt_idx[sec][sel][1])}) #minigame_ppt_idx[sec][sel]
 
 @app.route("/minisuccess", methods=['POST'])
 def res_minisuccess ():
@@ -402,29 +406,70 @@ def set_interval(func, sec):
     return t
 
 def every_second():
-    global time_idx, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended, end_of_game, stop_sig, minigame_tried, moved_dis, rank_history, sleeped_his, kill_his
+    global time_idx, last_attack_list, Team_list, mp, item_set_left, item_set_av, moved, attacked, check_update_point, defended, end_of_game, stop_sig, minigame_tried, moved_dis, rank_history, sleeped_his, kill_his, n_round
     #mode 0 : move, 1 : attack,game, 2 : def , 3 : wait
     #2분 시작할 때
     t_sum = T[0] + T[1] + T[2] + T[3] + T[4] + T[5]
     if time_idx%t_sum == 0:
         turn = (time_idx // t_sum) + 1
-        if turn > 11 and end_of_game:
+        if turn > n_round and end_of_game:
             end_of_game=0
-            stop_sig = True
-            set_value("status", "mode", 3)
-            set_value("status", "turn", 0)
             #Game end
-
+            for i in range(n_team):
+                if Team_list[i+1].sleep:
+                    sleeped_his[i+1]+=1
+                    Team_list[i+1].sleep=0
+                    Team_list[i+1].hp=20+up_armor_dictionary[Team_list[i+1].up_armor]+down_armor_dictionary[Team_list[i+1].down_armor]
+                    Team_list[i+1].up_armor='';Team_list[i+1].down_armor=''
+                    Team_list[i+1].move_team(random.randint(1,n_node),init=1)
+            update_database()
+            defended=dict()
+            #rank selction
+            final_rank=[0 for _ in range(n_team+1)]
+            sum_rank=[[0,i] for i in range(n_team+1)]
+            rk=0
+            for i in range(n_round):
+                for j in range(n_team+1):
+                    sum_rank[j][0]+=rank_history[-1-i][sum_rank[j][1]]
+                sum_rank.sort()
+                del_list=[]
+                for j in range(len(sum_rank)):
+                    if j<len(sum_rank)-1 and sum_rank[j][0]==sum_rank[j+1][0]:
+                        break
+                    final_rank[sum_rank[j][1]]=rk;rk+=1
+                    del_list.append(sum_rank[j])
+                for j in del_list:
+                    sum_rank.remove(j)
+            for i in range(n_team):
+                if Team_list[i+1].pos==0:
+                    final_rank[i+1]=0
+            get_special=[];s1=0;s2=0
+            for i in range(n_team):
+                if final_rank[i+1]==21:
+                    s2=i+1
+            for i in range(n_team):
+                get_special.append((moved_dis[i+1],i+1))
+            get_special.sort(reverse=1)
+            for i in range(len(rank_history)):
+                if 0<=final_rank[rank_history[i][1]]<=3 or final_rank[rank_history[i][1]]==21:
+                    continue
+                s1=rank_history[i][1]
+                break
+            #set statistics
             all_dic=dict()
             for i in range(n_team):
                 dic=dict()
                 dic['move_cnt']=moved_dis[i+1]
                 dic['sleep_cnt']=sleeped_his[i+1]
                 dic['kill_cnt']=kill_his[i+1]
-                dic['rank']=rank_history[-1][i+1] #rank
+                dic['rank']=final_rank[i+1] #rank
                 all_dic[i+1]=dic
+            all_dic['s1']=s1
+            all_dic['s2']=s2
             db.reference("winner").set(all_dic)
-            # rank_history
+            stop_sig = True
+            set_value("status", "mode", 3)
+            set_value("status", "turn", 0)
 
         set_value("status", "turn", turn)
         set_value("status", "mode", 0)
@@ -480,7 +525,7 @@ def every_second():
         rank_history.append(rank_nw)
         minigame_tried = [0 for i in range(n_team+1)]
         attacked = [0 for i in range(n_team+1)]
-        
+
     time_idx += 1
     set_value("status", "time_idx", time_idx)
 
@@ -532,7 +577,6 @@ for i in range(n_team+1):
         item_set_av[i].append([])
         for k in range(3):
             item_set_av[i][j].append(0)
-
-
+db.reference("winner").delete()
 if __name__=="__main__":
     serve(app, host='0.0.0.0', port=5555)
