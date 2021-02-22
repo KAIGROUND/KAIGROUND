@@ -166,7 +166,7 @@ Team_list = [Team(0,0,0,[],[],0)]+[Team(i+1,20,0,['개강'],[],0) for i in range
 last_attack_list=[[] for i in range(n_team+1)] #last_attack_list[a][b] 뜻 a 팀이 last_attack_list[a][b]한테 공격 받음
 
 def attack(a:Team, b:Team, attack_item:str): #a attack b with attack_item
-    global attack_list, last_attack_list, Team_list, mp
+    global last_attack_list, Team_list, mp
     if attack_item not in a.attack_itemlist:
         return
     last_attack_list[b.id].append([a.id,attack_dictionary[attack_item]['attack'],attack_item])
@@ -448,7 +448,6 @@ def every_second():
     #9분 시작할 때
     if time_idx%t_sum == (T[0] + T[1] + T[2] + T[3]):
         set_value("status", "mode", 2)
-
     #9분 끝나고 3초
     if time_idx%t_sum == (T[0] + T[1] + T[2] + T[3] + T[4] + 3) and check_update_point:
         check_update_point=0
@@ -481,6 +480,7 @@ def every_second():
         rank_history.append(rank_nw)
         minigame_tried = [0 for i in range(n_team+1)]
         attacked = [0 for i in range(n_team+1)]
+        
     time_idx += 1
     set_value("status", "time_idx", time_idx)
 
