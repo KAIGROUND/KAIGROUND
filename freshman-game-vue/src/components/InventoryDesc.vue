@@ -41,15 +41,15 @@
                         v-if="this.id <= 11 && !narrow"
                 ></v-rating>
 
-                <div class="grey--text ml-4 mr-4" v-if="this.id <= 11 && !narrow">
+                <div class="black--text ml-4 mr-4" v-if="this.id <= 11 && !narrow">
                     {{att2}}
                 </div>
             </v-row>
 
-            <div class="grey--text mr-4 fs mt-4" v-if="narrow">
+            <div class="black--text mr-4 fs mt-4" v-if="narrow">
                 {{att}}
             </div>
-            <div class="grey--text mr-4 fs" v-if="this.id <= 11 && narrow">
+            <div class="black--text mr-4 fs" v-if="this.id <= 11 && narrow">
                 {{att2}}
             </div>
 
@@ -106,7 +106,7 @@
 
 <style scoped>
     .fs{
-        font-size: 1.7em;
-        line-height: 1.9;
+        font-size: 3em;
+        line-height: 2.0;
     }
 </style>
