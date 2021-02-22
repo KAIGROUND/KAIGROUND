@@ -108,7 +108,7 @@
 
 <style scoped>
     .fs{
-        font-size: 5.2em;
-        line-height: 3;
+        font-size: 1.3em;
+        line-height: 1.6;
     }
 </style>
