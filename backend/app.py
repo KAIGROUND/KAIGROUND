@@ -437,7 +437,7 @@ def every_second():
                 sum_rank.sort()
                 del_list=[]
                 for j in range(len(sum_rank)):
-                    if len(sum_rank)>1 and sum_rank[j][0]==sum_rank[j+1][0]:
+                    if j<len(sum_rank)-1 and sum_rank[j][0]==sum_rank[j+1][0]:
                         break
                     final_rank[sum_rank[j][1]]=rk;rk+=1
                     del_list.append(sum_rank[j])
