@@ -45,6 +45,17 @@
       </v-container>
     </div>
     <Result v-if="show_result" @close="show_result = false" :result_data="result_data"></Result>
+    <v-dialog
+            v-model="dialog_8"
+            persistent
+            max-width="1000"
+    >
+      <v-card>
+        <div class="game-progressing">특별상 2개가 공개 됩니다!</div>
+        <div class="game-progressing-sub">1. 강인한 심장 : 시작부터 게임이 끝날 때까지 이동한 거리가 가장 긴 팀이 수상!</div>
+        <div class="game-progressing-sub">2. 21학번 환영해요 : 21등 팀에게 수상!</div>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -94,6 +105,7 @@ export default {
       show_result: false,
       result_data: null,
       minigame_mode: false,
+      dialog_8: false,
     })
   },
 
@@ -117,6 +129,12 @@ export default {
 
     status.child('turn').on("value", snapshot=>{
       this.turn = parseInt(snapshot.val())
+      if(snapshot.val() == 8){
+        this.dialog_8 = true
+        setTimeout(() => {
+          this.dialog_8 = false
+        }, 5000)
+      }
     })
 
     db.ref('winner').on("value", snapshot=>{
@@ -214,5 +232,18 @@ export default {
 <style scoped>
   .container{
     max-width: 1650px;
+  }
+
+  .game-progressing{
+    font-size: 2em;
+    text-align: center;
+    padding: 24px;
+    font-weight: bold;
+  }
+
+  .game-progressing-sub{
+    font-size: 1.3em;
+    text-align: center;
+    padding: 8px;
   }
 </style>

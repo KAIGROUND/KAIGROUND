@@ -9,7 +9,7 @@
                         <v-img src="../assets/kaiground.png"></v-img>
                         <v-card class="elevation-12">
                             <v-toolbar dark color="primary">
-                                <v-toolbar-title>Login to KAIground</v-toolbar-title>
+                                <v-toolbar-title>Login to KAIGROUND</v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
                                 <v-form>
@@ -77,5 +77,6 @@
 </script>
 
 <style scoped>
+
 
 </style>
