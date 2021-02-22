@@ -3,8 +3,10 @@
     <v-app id="inspire">
         <v-content>
             <v-container fluid fill-height>
+
                 <v-layout align-center justify-center>
                     <v-flex xs12 sm8 md4>
+                        <v-img src="../assets/kaiground.png"></v-img>
                         <v-card class="elevation-12">
                             <v-toolbar dark color="primary">
                                 <v-toolbar-title>Login to KAIground</v-toolbar-title>
@@ -34,6 +36,7 @@
                                 <v-btn color="primary" @click="submit">로그인</v-btn>
                             </v-card-actions>
                         </v-card>
+                        <v-img src="../assets/freshman-ot.png" height="200px" width="300px" style="margin: 0 auto"></v-img>
                     </v-flex>
                 </v-layout>
             </v-container>

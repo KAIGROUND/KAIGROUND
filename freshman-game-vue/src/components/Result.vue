@@ -38,7 +38,7 @@
         props: ["show", "result_data"],
         computed: {
             rank_subtitle(){
-                return this.result_data.rank === 1 ? '이겼닭! 오늘 저녁은 치킨이닭!' : this.result_data.rank <= 3 ? `TOP ${this.result_data.rank} 달성!` : this.result_data.rank <= 10 ? 'TOP 10 달성!' : ''
+                return this.result_data.rank === 1 ? '이겼닭! 오늘 저녁은 치킨이닭!' : this.result_data.rank <= 3 ? `TOP ${this.result_data.rank} 달성!` : this.result_data.rank <= 10 ? 'TOP 10 달성!' : '수고하셨습니다!'
             }
         }
     }
