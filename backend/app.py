@@ -414,9 +414,6 @@ def every_second():
         turn = (time_idx // t_sum) + 1
         if turn > n_round and end_of_game:
             end_of_game=0
-            stop_sig = True
-            set_value("status", "mode", 3)
-            set_value("status", "turn", 0)
             #Game end
             for i in range(n_team):
                 if Team_list[i+1].sleep:
@@ -446,6 +443,18 @@ def every_second():
             for i in range(n_team):
                 if Team_list[i+1].pos==0:
                     final_rank[i+1]=0
+            get_special=[];s1=0;s2=0
+            for i in range(n_team):
+                if final_rank[i+1]==21:
+                    s2=i+1
+            for i in range(n_team):
+                get_special.append((moved_dis[i+1],i+1))
+            get_special.sort(reverse=1)
+            for i in range(len(rank_history)):
+                if 0<=final_rank[rank_history[i][1]]<=3 or final_rank[rank_history[i][1]]==21:
+                    continue
+                s1=rank_history[i][1]
+                break
             #set statistics
             all_dic=dict()
             for i in range(n_team):
@@ -455,8 +464,13 @@ def every_second():
                 dic['kill_cnt']=kill_his[i+1]
                 dic['rank']=final_rank[i+1] #rank
                 all_dic[i+1]=dic
+            all_dic['s1']=s1
+            all_dic['s2']=s2
             db.reference("winner").set(all_dic)
-            
+            stop_sig = True
+            set_value("status", "mode", 3)
+            set_value("status", "turn", 0)
+
         set_value("status", "turn", turn)
         set_value("status", "mode", 0)
     #2분 끝나고 3초
