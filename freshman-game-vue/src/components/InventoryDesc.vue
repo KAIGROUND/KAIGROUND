@@ -27,7 +27,7 @@
                         v-if="!narrow"
                 ></v-rating>
 
-                <div class="grey--text ml-4 mr-4" v-if="!narrow">
+                <div class="black--text ml-4 mr-4" v-if="!narrow">
                     {{att}}
                 </div>
 
@@ -57,7 +57,9 @@
                 {{count ? count + '개 보유중' : ''}}
             </div>
 
-            <div>{{item_desc[this.id]}}</div>
+            <div class="black--text">
+                {{item_desc[this.id]}}
+            </div>
         </v-card-text>
 
     </v-card>
@@ -106,7 +108,7 @@
 
 <style scoped>
     .fs{
-        font-size: 3em;
-        line-height: 2.0;
+        font-size: 7.2em;
+        line-height: 3;
     }
 </style>
