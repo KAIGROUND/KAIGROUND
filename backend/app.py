@@ -428,8 +428,8 @@ def every_second():
             final_rank=[0 for _ in range(n_team+1)]
             sum_rank=[[0,i] for i in range(n_team+1)]
             rk=0
-            for i in range(n_round-1):
-                for j in range(n_team+1):
+            for i in range(n_round):
+                for j in range(len(sum_rank)):
                     sum_rank[j][0]+=rank_history[-1-i][sum_rank[j][1]]
                 sum_rank.sort()
                 del_list=[]
