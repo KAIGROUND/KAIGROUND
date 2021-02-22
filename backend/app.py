@@ -97,7 +97,8 @@ class graph:
         global moved_dis
         if not init and self.dis_node(team_pos, nd_id)>3:
             return 0
-        moved_dis[team_id]+=self.dis_node(team_pos, nd_id)
+        if not init:
+            moved_dis[team_id]+=self.dis_node(team_pos, nd_id)
         self.g[team_pos].teams.remove(team_id)
         self.g[nd_id].teams.append(team_id)
         return 1
@@ -351,7 +352,9 @@ def res_miniselect():
         return jsonify({'result':3,'err_msg':'한턴에 두번 아이템 세트에 도전하는건 좀 너무하지 않나요?'})
     minigame_tried[team_id]=1;item_set_av[team_id][Team_list[team_id].pos][sel]=1
     item_set_left[sec][sel]-=1
-    return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임의 %d번째 게임을 해주세요!'%(minigame_ppt_idx[sec][sel][0],minigame_ppt_idx[sec][sel][1])}) #minigame_ppt_idx[sec][sel]
+    if minigame_ppt_idx[sec][sel][0] in [99,178, 389, 468, 472, 513, 534]:
+        return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임을 시작해 주세요!'%(minigame_ppt_idx[sec][sel][0])}) 
+    return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임의 %d번째 게임을 시작해 주세요!'%(minigame_ppt_idx[sec][sel][0],minigame_ppt_idx[sec][sel][1])}) #minigame_ppt_idx[sec][sel]
 
 @app.route("/minisuccess", methods=['POST'])
 def res_minisuccess ():
@@ -480,7 +483,7 @@ def every_second():
         rank_history.append(rank_nw)
         minigame_tried = [0 for i in range(n_team+1)]
         attacked = [0 for i in range(n_team+1)]
-        
+
     time_idx += 1
     set_value("status", "time_idx", time_idx)
 
