@@ -36,12 +36,14 @@
         <v-dialog
                 v-model="dialog"
                 persistent
-                max-width="1200"
+                max-width="1000"
         >
             <v-card>
-                <div class="game-progressing">{{msg}}</div>
-                <div class="game-progressing-sub">
+                <div class="game-progressing">
                     {{idx + 1}}번째 아이템을 얻기 위한 미니게임이 진행 중입니다.
+                </div>
+                <div class="game-progressing-sub">
+                    {{msg}}
                 </div>
             </v-card>
         </v-dialog>
@@ -219,7 +221,7 @@
     }
 
     .game-progressing{
-        font-size: 1.5em;
+        font-size: 2em;
         text-align: center;
         padding: 24px;
         font-weight: bold;
