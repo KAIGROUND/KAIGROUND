@@ -36,7 +36,7 @@
         <v-dialog
                 v-model="dialog"
                 persistent
-                max-width="1000"
+                max-width="1200"
         >
             <v-card>
                 <div class="game-progressing">{{msg}}</div>
@@ -219,7 +219,7 @@
     }
 
     .game-progressing{
-        font-size: 2em;
+        font-size: 1.5em;
         text-align: center;
         padding: 24px;
         font-weight: bold;
