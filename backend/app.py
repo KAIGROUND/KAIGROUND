@@ -555,7 +555,7 @@ def res_init():
     if request.args.get('ps')!="3141592":
         return 'Not admin'
     idx = request.args.get('time_idx')
-    if (idx is not None) and idx!=0:
+    if (idx is not None) and int(idx)!=0:
         set_value("status", "time_idx", int(idx))
     else:
         set_value("status", "mode", 4)
@@ -590,5 +590,6 @@ for i in range(n_team+1):
 db.reference("winner").delete()
 set_value("status", "mode", 3)
 set_value("status", "turn", 0)
+update_database()
 if __name__=="__main__":
     serve(app, host='0.0.0.0', port=5555)
