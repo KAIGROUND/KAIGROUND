@@ -5,7 +5,7 @@ from json import dumps
 from typing import List 
 from firebase_admin import credentials, db
 from threading import Thread, Timer
-import sys, firebase_admin, random
+import sys, firebase_admin, random, time
 from waitress import serve
 
 app = Flask(__name__)
@@ -427,22 +427,28 @@ def every_second():
             #rank selction
             final_rank=[0 for _ in range(n_team+1)]
             sum_rank=[[0,i] for i in range(n_team+1)]
-            rk=0
-            for i in range(len(rank_history)):
-                for j in range(len(sum_rank)):
-                    sum_rank[j][0]+=rank_history[-1-i][sum_rank[j][1]]
-                sum_rank.sort()
-                del_list=[]
-                for j in range(len(sum_rank)):
-                    if j<len(sum_rank)-1 and sum_rank[j][0]==sum_rank[j+1][0]:
-                        break
-                    final_rank[sum_rank[j][1]]=rk;rk+=1
-                    del_list.append(sum_rank[j])
-                for j in del_list:
-                    sum_rank.remove(j)
-            for i in range(n_team):
-                if Team_list[i+1].pos==0:
-                    final_rank[i+1]=0
+            rk=0 
+            for j in range(len(sum_rank)):
+                sum_rank[j][0]+=rank_history[-1][sum_rank[j][1]]
+            sum_rank.sort()
+            i=0
+            while i<len(sum_rank):
+                if i==len(sum_rank)-1 or (i<len(sum_rank)-1 and sum_rank[i][0]!=sum_rank[i+1][0]):
+                    final_rank[sum_rank[i][1]]=rk;rk+=1
+                else:
+                    j=1;a=sum_rank[i][0];b=sum_rank[i+1][0]
+                    while j<len(rank_history)-1 and a==b:
+                        a+=rank_history[-1-j][sum_rank[i][1]]
+                        b+=rank_history[-1-j][sum_rank[i+1][1]]
+                        j+=1
+                    if a>b:
+                        final_rank[sum_rank[i+1][1]]=rk;rk+=1
+                        final_rank[sum_rank[i][1]]=rk;rk+=1
+                    else:
+                        final_rank[sum_rank[i][1]]=rk;rk+=1
+                        final_rank[sum_rank[i+1][1]]=rk;rk+=1
+                    i+=1
+                i+=1
             get_special=[];s1=0;s2=0
             for i in range(n_team):
                 if final_rank[i+1]==21:
@@ -455,6 +461,7 @@ def every_second():
                     continue
                 s1=get_special[i][1]
                 break
+            
             #set statistics
             all_dic=dict()
             for i in range(n_team):
@@ -463,9 +470,11 @@ def every_second():
                 dic['sleep_cnt']=sleeped_his[i+1]
                 dic['kill_cnt']=kill_his[i+1]
                 dic['rank']=final_rank[i+1] #rank
+                if s1==i+1:
+                    dic['s1']=1
+                if s2==i+1:
+                    dic['s2']=1
                 all_dic[i+1]=dic
-            all_dic['s1']=s1
-            all_dic['s2']=s2
             db.reference("winner").set(all_dic)
             stop_sig = True
             set_value("status", "mode", 3)
@@ -553,9 +562,11 @@ def res_init():
     if request.args.get('ps')!="3141592":
         return 'Not admin'
     idx = request.args.get('time_idx')
-    if idx is not None:
+    if (idx is not None) and int(idx)!=0:
         set_value("status", "time_idx", int(idx))
     else:
+        set_value("status", "mode", 4)
+        time.sleep(10)
         set_value("status", "time_idx", 0)
     update_database()
     game_thread = Thread(target=run_game)
@@ -582,6 +593,10 @@ for i in range(n_team+1):
         item_set_av[i].append([])
         for k in range(3):
             item_set_av[i][j].append(0)
+
 db.reference("winner").delete()
+set_value("status", "mode", 3)
+set_value("status", "turn", 0)
+update_database()
 if __name__=="__main__":
     serve(app, host='0.0.0.0', port=5555)
