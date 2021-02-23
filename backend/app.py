@@ -482,6 +482,7 @@ def every_second():
                 Team_list[i+1].hp=20+up_armor_dictionary[Team_list[i+1].up_armor]+down_armor_dictionary[Team_list[i+1].down_armor]
                 Team_list[i+1].up_armor='';Team_list[i+1].down_armor=''
                 Team_list[i+1].move_team(random.randint(1,n_node),init=1)
+        turn = (time_idx // t_sum) + 1
         if turn==1:
             for i in range(n_team):
                 if not Team_list[i+1].pos:
