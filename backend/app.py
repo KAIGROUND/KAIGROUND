@@ -428,7 +428,7 @@ def every_second():
             final_rank=[0 for _ in range(n_team+1)]
             sum_rank=[[0,i] for i in range(n_team+1)]
             rk=0
-            for i in range(n_round):
+            for i in range(len(rank_history)):
                 for j in range(len(sum_rank)):
                     sum_rank[j][0]+=rank_history[-1-i][sum_rank[j][1]]
                 sum_rank.sort()
@@ -450,10 +450,10 @@ def every_second():
             for i in range(n_team):
                 get_special.append((moved_dis[i+1],i+1))
             get_special.sort(reverse=1)
-            for i in range(len(rank_history)):
-                if 0<=final_rank[rank_history[i][1]]<=3 or final_rank[rank_history[i][1]]==21:
+            for i in range(len(get_special)):
+                if 0<=final_rank[get_special[i][1]]<=3 or final_rank[get_special[i][1]]==21:
                     continue
-                s1=rank_history[i][1]
+                s1=get_special[i][1]
                 break
             #set statistics
             all_dic=dict()
