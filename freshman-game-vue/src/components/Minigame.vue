@@ -39,10 +39,10 @@
                 max-width="1000"
         >
             <v-card>
-                <div class="game-progressing">
+                <div class="game-progressing black--text">
                     {{idx + 1}}번째 아이템을 얻기 위한 미니게임이 진행 중입니다.
                 </div>
-                <div class="game-progressing-sub black--text">{{msg}}</div>
+                <div class="game-progressing-sub font-weight-bold">{{msg}}</div>
             </v-card>
         </v-dialog>
 
