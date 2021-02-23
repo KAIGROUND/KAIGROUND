@@ -5,7 +5,7 @@ from json import dumps
 from typing import List 
 from firebase_admin import credentials, db
 from threading import Thread, Timer
-import sys, firebase_admin, random
+import sys, firebase_admin, random, time
 from waitress import serve
 
 app = Flask(__name__)
@@ -463,9 +463,11 @@ def every_second():
                 dic['sleep_cnt']=sleeped_his[i+1]
                 dic['kill_cnt']=kill_his[i+1]
                 dic['rank']=final_rank[i+1] #rank
+                if s1==i+1:
+                    dic['s1']=1
+                if s2==i+1:
+                    dic['s2']=1
                 all_dic[i+1]=dic
-            all_dic['s1']=s1
-            all_dic['s2']=s2
             db.reference("winner").set(all_dic)
             stop_sig = True
             set_value("status", "mode", 3)
@@ -556,6 +558,8 @@ def res_init():
     if idx is not None:
         set_value("status", "time_idx", int(idx))
     else:
+        set_value("status", "mode", 4)
+        time.sleep(10)
         set_value("status", "time_idx", 0)
     update_database()
     game_thread = Thread(target=run_game)
