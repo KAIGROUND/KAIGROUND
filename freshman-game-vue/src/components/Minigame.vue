@@ -10,7 +10,9 @@
                 <v-card-title class="headline font-weight-bold">
                     확인
                 </v-card-title>
-                <v-card-text>{{idx+1}}번째 아이템을 선택하신 것이 맞나요?</v-card-text>
+                <v-card-text>
+                    <div class="black--text">{{idx+1}}번째 아이템을 선택하신 것이 맞나요?</div>
+                </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
@@ -37,8 +39,10 @@
                 max-width="1000"
         >
             <v-card>
-                <div class="game-progressing">{{idx + 1}}번째 아이템을 얻기 위한 미니게임이 진행 중입니다.</div>
-                <div class="game-progressing-sub">{{msg}}</div>
+                <div class="game-progressing">
+                    {{idx + 1}}번째 아이템을 얻기 위한 미니게임이 진행 중입니다.
+                </div>
+                <div class="game-progressing-sub black--text">{{msg}}</div>
             </v-card>
         </v-dialog>
 
@@ -51,7 +55,9 @@
                 <v-card-title class="headline font-weight-bold">
                     미니게임 성공 여부
                 </v-card-title>
-                <v-card-text>미니게임에 성공하셨나요? 아래 버튼을 눌러주세요.</v-card-text>
+                <v-card-text>
+                    <div class="black--text">미니게임에 성공하셨나요? 아래 버튼을 눌러주세요.</div>
+                </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
