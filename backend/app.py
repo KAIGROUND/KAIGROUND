@@ -354,8 +354,8 @@ def res_miniselect():
     minigame_tried[team_id]=1;item_set_av[team_id][Team_list[team_id].pos][sel]=1
     item_set_left[sec][sel]-=1
     if minigame_ppt_idx[sec][sel][0] in [99,178, 389, 468, 472, 513, 534]:
-        return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임을 시작해 주세요!'%(minigame_ppt_idx[sec][sel][0])}) 
-    return jsonify({'result':0,'msg':'%d번째 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임의 %d번째 게임을 시작해 주세요!'%(minigame_ppt_idx[sec][sel][0],minigame_ppt_idx[sec][sel][1])}) #minigame_ppt_idx[sec][sel]
+        return jsonify({'result':0,'msg':'<b>%d번째</b> 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임을 시작해 주세요!'%(minigame_ppt_idx[sec][sel][0])}) 
+    return jsonify({'result':0,'msg':'<b>%d번째</b> 슬라이드로 이동하여 게임 규칙을 확인하고 해당 게임의 <b>%d번째</b> 게임을 시작해 주세요!'%(minigame_ppt_idx[sec][sel][0],minigame_ppt_idx[sec][sel][1])})
 
 @app.route("/minisuccess", methods=['POST'])
 def res_minisuccess ():
