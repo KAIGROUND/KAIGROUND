@@ -35,10 +35,16 @@
           </v-col>
         </v-row>
         <v-row no-gutters dense>
-          <v-col cols="1" >
+          <v-col cols="3" >
             <v-icon @click="launch_minigame" v-if="$store.state.class !== '0'">mdi-controller-classic</v-icon>
           </v-col>
-          <v-col cols="11">
+          <v-col cols="6">
+            <v-card v-if="turn >= 8" class="mt-2 pa-4">
+              <div>1. 강인한 심장 : 시작부터 게임이 끝날 때까지 이동한 거리가 가장 긴 팀이 수상!</div>
+              <div>2. 21학번 환영해요 : 21등 팀에게 수상!</div>
+            </v-card>
+          </v-col>
+          <v-col cols="3">
             <Header/>
           </v-col>
         </v-row>
@@ -56,6 +62,7 @@
         <div class="game-progressing-sub">2. 21학번 환영해요 : 21등 팀에게 수상!</div>
       </v-card>
     </v-dialog>
+    <Timer :show="timer_dialog" @show_cd="show_cd"></Timer>
   </v-app>
 </template>
 
@@ -71,11 +78,13 @@ import Footer from "@/components/Footer";
 import Header from "./Header";
 import Minigame from "./Minigame";
 import Result from "./Result";
+import Timer from "./Timer";
 
 export default {
   name: 'App',
 
   components: {
+    Timer,
     Result,
     Minigame,
     Footer,
@@ -106,6 +115,7 @@ export default {
       result_data: null,
       minigame_mode: false,
       dialog_8: false,
+      timer_dialog: false,
     })
   },
 
@@ -115,6 +125,7 @@ export default {
     status.child('mode').on("value", snapshot=>{
       this.mode = snapshot.val()
       this.minigame_mode = false
+      this.timer_dialog = snapshot.val() === 4;
       if(snapshot.val() !== 3){
         this.get_time_idx(val => {
           const time_conf = db.ref('time_conf')
@@ -129,7 +140,7 @@ export default {
 
     status.child('turn').on("value", snapshot=>{
       this.turn = parseInt(snapshot.val())
-      if(snapshot.val() == 8){
+      if(snapshot.val() === 8){
         this.dialog_8 = true
         setTimeout(() => {
           this.dialog_8 = false
@@ -224,6 +235,9 @@ export default {
     },
     map_class_restore(){
       this.map_accent_num=0
+    },
+    show_cd(b){
+      this.timer_dialog = b
     }
   }
 };

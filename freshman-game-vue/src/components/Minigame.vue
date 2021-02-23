@@ -42,8 +42,7 @@
                 <div class="game-progressing">
                     {{idx + 1}}번째 아이템을 얻기 위한 미니게임이 진행 중입니다.
                 </div>
-                <div class="game-progressing-sub">
-                    {{msg}}
+                <div class="game-progressing-sub" v-html="msg">
                 </div>
             </v-card>
         </v-dialog>

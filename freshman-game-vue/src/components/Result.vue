@@ -20,6 +20,11 @@
                     <div class="white--text normal-header mb-10 flex">수면 횟수<div class="white--text oswald ml-8">{{this.result_data.sleep_cnt}}</div> 회</div>
                     <div class="white--text normal-header flex">이동한 칸<div class="white--text oswald ml-8">{{this.result_data.move_cnt}}</div> 회</div>
                 </div>
+                <div class="spec-container">
+                    <div class="spec-winner normal-header mb-10" v-if="result_data.s1 === 1">특별상 수상! : 강인한 심장</div>
+                    <div class="spec-winner normal-header" v-if="result_data.s2 === 1">특별상 수상! : 21학번 환영해요</div>
+                </div>
+
             </div>
 
             <v-btn class="right-bottom" @click="$emit('close')">
@@ -119,5 +124,9 @@
         position: absolute;
         right: 50px;
         bottom: 50px;
+    }
+
+    .spec-winner{
+        color: #FFC107;
     }
 </style>
