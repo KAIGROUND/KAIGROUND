@@ -427,22 +427,28 @@ def every_second():
             #rank selction
             final_rank=[0 for _ in range(n_team+1)]
             sum_rank=[[0,i] for i in range(n_team+1)]
-            rk=0
-            for i in range(len(rank_history)):
-                for j in range(len(sum_rank)):
-                    sum_rank[j][0]+=rank_history[-1-i][sum_rank[j][1]]
-                sum_rank.sort()
-                del_list=[]
-                for j in range(len(sum_rank)):
-                    if j<len(sum_rank)-1 and sum_rank[j][0]==sum_rank[j+1][0]:
-                        break
-                    final_rank[sum_rank[j][1]]=rk;rk+=1
-                    del_list.append(sum_rank[j])
-                for j in del_list:
-                    sum_rank.remove(j)
-            for i in range(n_team):
-                if Team_list[i+1].pos==0:
-                    final_rank[i+1]=0
+            rk=0 
+            for j in range(len(sum_rank)):
+                sum_rank[j][0]+=rank_history[-1][sum_rank[j][1]]
+            sum_rank.sort()
+            i=0
+            while i<len(sum_rank):
+                if i==len(sum_rank)-1 or (i<len(sum_rank)-1 and sum_rank[i][0]!=sum_rank[i+1][0]):
+                    final_rank[sum_rank[i][1]]=rk;rk+=1
+                else:
+                    j=1;a=sum_rank[i][0];b=sum_rank[i+1][0]
+                    while j<len(rank_history)-1 and a==b:
+                        a+=rank_history[-1-j][sum_rank[i][1]]
+                        b+=rank_history[-1-j][sum_rank[i+1][1]]
+                        j+=1
+                    if a<b:
+                        final_rank[sum_rank[i][1]]=rk;rk+=1
+                        final_rank[sum_rank[i+1][1]]=rk;rk+=1
+                    else:
+                        final_rank[sum_rank[i+1][1]]=rk;rk+=1
+                        final_rank[sum_rank[i][1]]=rk;rk+=1
+                    i+=1
+                i+=1
             get_special=[];s1=0;s2=0
             for i in range(n_team):
                 if final_rank[i+1]==21:
@@ -455,6 +461,7 @@ def every_second():
                     continue
                 s1=get_special[i][1]
                 break
+            
             #set statistics
             all_dic=dict()
             for i in range(n_team):
