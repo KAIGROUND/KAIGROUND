@@ -441,12 +441,12 @@ def every_second():
                         a+=rank_history[-1-j][sum_rank[i][1]]
                         b+=rank_history[-1-j][sum_rank[i+1][1]]
                         j+=1
-                    if a<b:
-                        final_rank[sum_rank[i][1]]=rk;rk+=1
+                    if a>b:
                         final_rank[sum_rank[i+1][1]]=rk;rk+=1
+                        final_rank[sum_rank[i][1]]=rk;rk+=1
                     else:
-                        final_rank[sum_rank[i+1][1]]=rk;rk+=1
                         final_rank[sum_rank[i][1]]=rk;rk+=1
+                        final_rank[sum_rank[i+1][1]]=rk;rk+=1
                     i+=1
                 i+=1
             get_special=[];s1=0;s2=0
