@@ -71,7 +71,7 @@
         methods:{
             get_src(id){
                 try{
-                    return require(`../assets/item/${id}.png`)
+                    return `https://storage.googleapis.com/kaiground/assets/item/${id}.png`
                 } catch(e) {
                     return 'https://img.icons8.com/ios/452/sword.png'
                 }

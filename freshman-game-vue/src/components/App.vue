@@ -150,8 +150,10 @@ export default {
 
     db.ref('winner').on("value", snapshot=>{
       const final_result = snapshot.val()
-      this.result_data = final_result[this.$store.state.class] ?? null;
-      if(this.result_data) this.show_result = true
+      if(final_result){
+        this.result_data = final_result[this.$store.state.class] ?? null;
+        if(this.result_data) this.show_result = true
+      }
     })
   },
 

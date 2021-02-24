@@ -7,7 +7,7 @@
         <v-divider/>
         <v-img
                 max-height="620px"
-                src="../assets/map.png">
+                src="https://storage.googleapis.com/kaiground/assets/map.png">
 
             <div class="map-info">맵 상의 정점 또는 오른쪽 스테미나에 커서를 갖다 대어 반 위치를 확인하세요.</div>
             <v-switch v-model="switch1" inset class="switch-me" :label="switch1 ? '팀 수 표시' : '구역 표시'"></v-switch>
@@ -106,7 +106,7 @@
             },
             get_src(idx){
                 try{
-                    return require('../assets/building/'+(idx+1)+'.jpg')
+                    return 'https://storage.googleapis.com/kaiground/assets/building/'+(idx+1)+'.jpg'
                 } catch (e){
                     return ''
                 }
