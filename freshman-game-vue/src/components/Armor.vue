@@ -52,7 +52,8 @@
         methods:{
             get_src(id){
                 try{
-                    return require(`../assets/item/${id}.png`)
+                    if(id > 0) return `https://storage.googleapis.com/kaiground/assets/item/${id}.png`
+                    else return ''
                 } catch(e) {
                     return ''
                 }

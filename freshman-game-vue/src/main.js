@@ -4,7 +4,9 @@ import vuetify from './plugins/vuetify';
 import VueRouter from 'vue-router';
 import Login from "./components/Login";
 import Main from "./components/Main";
-import firebase from "firebase";
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 import { store } from "./store";
 import axios from 'axios'
 const firebaseConfig=require("../credentials/firebase")
