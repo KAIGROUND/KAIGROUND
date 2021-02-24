@@ -20,4 +20,3 @@ for i in range(n_node):
         for _ in range(5):
             random.shuffle(nw)
 minigame_ppt_idx.insert(0,[])
-print(minigame_ppt_idx)

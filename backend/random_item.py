@@ -26,4 +26,11 @@ for i in range(42):
 for i in range(10):
     random.shuffle(item)
 item.insert(0,[])
-print(item)
+
+import csv
+with open("test.csv", 'w', newline='') as file:
+    p = csv.writer(file, delimiter=',', quotechar='|')
+    for i in range(len(item)):
+        if i==0: continue
+        for j in range(3):
+            p.writerow([item[i][j][0],item[i][j][1]])
