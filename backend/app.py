@@ -470,12 +470,12 @@ def every_second():
                 if final_rank[i+1]==21:
                     s2=i+1
             for i in range(n_team):
-                get_special.append((moved_dis[i+1],i+1))
+                get_special.append((moved_dis[i+1],-Team_list[i+1].points,i+1))
             get_special.sort(reverse=1)
             for i in range(len(get_special)):
-                if 0<=final_rank[get_special[i][1]]<=3 or final_rank[get_special[i][1]]==21:
+                if 0<=final_rank[get_special[i][2]]<=3 or final_rank[get_special[i][2]]==21:
                     continue
-                s1=get_special[i][1]
+                s1=get_special[i][2]
                 break
             
             #set statistics
