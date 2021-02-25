@@ -6,6 +6,7 @@ from typing import List
 from firebase_admin import credentials, db
 from threading import Thread, Timer
 import firebase_admin, random, time
+from waitress import serve
 
 app = Flask(__name__)
 CORS(app)
@@ -612,6 +613,8 @@ for i in range(n_team+1):
 db.reference("winner").delete()
 set_value("status", "mode", 3)
 set_value("status", "turn", 0)
+
+
 update_database()
 if __name__=="__main__":
-    serve(app, host='0.0.0.0', port=5555, threads=12)
+    serve(app, host='0.0.0.0', port=5555, threads=26)
