@@ -6,7 +6,6 @@ from typing import List
 from firebase_admin import credentials, db
 from threading import Thread, Timer
 import firebase_admin, random, time
-from waitress import serve
 
 app = Flask(__name__)
 CORS(app)
