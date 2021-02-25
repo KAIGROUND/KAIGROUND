@@ -613,8 +613,10 @@ for i in range(n_team+1):
 db.reference("winner").delete()
 set_value("status", "mode", 3)
 set_value("status", "turn", 0)
-
-
+for i in range(n_node):
+    for j in range(3):
+        if (mp.g[i+1].items[j][0] in [9, 10, 11]) or (mp.g[i+1].items[j][1] in [20, 21]):
+            item_set_left[i+1][j]=3
 update_database()
 if __name__=="__main__":
     serve(app, host='0.0.0.0', port=5555, threads=26)
