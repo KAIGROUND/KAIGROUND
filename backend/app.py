@@ -615,4 +615,4 @@ set_value("status", "mode", 3)
 set_value("status", "turn", 0)
 update_database()
 if __name__=="__main__":
-    serve(app, host='0.0.0.0', port=5555)
+    serve(app, host='0.0.0.0', port=5500, threads=12)
