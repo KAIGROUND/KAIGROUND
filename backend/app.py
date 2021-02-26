@@ -7,9 +7,11 @@ from firebase_admin import credentials, db
 from threading import Thread, Timer
 import firebase_admin, random, time
 from waitress import serve
+import flask_monitoringdashboard as dashboard
 
 app = Flask(__name__)
 CORS(app)
+dashboard.bind(app)
 cred = credentials.Certificate("./kaistground-firebase-adminsdk-gmdug-6d30cf4f0d.json")
 admin = firebase_admin.initialize_app(cred, {'databaseURL':'https://kaistground-default-rtdb.firebaseio.com'})
 game_thread = None
