@@ -57,9 +57,9 @@
             max-width="1000"
     >
       <v-card>
-        <div class="game-progressing">특별상 2개가 공개 됩니다!</div>
-        <div class="game-progressing-sub">1. <b>다리 아프겠다...</b>: 시작부터 게임이 끝날 때까지 이동한 거리가 가장 긴 팀이 수상!</div>
-        <div class="game-progressing-sub">2. <b>21학번 환영해요</b>: 21등 팀에게 수상!</div>
+        <div class="game-progressing">특별상 2개가 공개됩니다!</div>
+        <div class="game-progressing-sub">[특별상] <b>다리 아프겠다...</b>: 시작부터 게임이 끝날 때까지 이동한 거리가 가장 긴 팀이 수상!</div>
+        <div class="game-progressing-sub">[특별상] <b>21학번 환영해요</b>: 21등 팀에게 수상!</div>
       </v-card>
     </v-dialog>
     <Timer :show="timer_dialog" @show_cd="show_cd"></Timer>
